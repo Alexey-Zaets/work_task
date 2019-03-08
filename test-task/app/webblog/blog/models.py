@@ -17,6 +17,9 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
+    class MPTTMeta:
+        order_isertion_by = ['title']
+
 
 class Tag(models.Model):
     title = models.CharField('Tag title', max_length=60)
@@ -44,3 +47,6 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ['-pub_date']

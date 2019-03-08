@@ -2,17 +2,30 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 from django.views.generic.base import TemplateView
+from django.views.generic.list import ListView
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
+from .models import Post
 from .forms import RegisterUserForm
 
 
-class HomePageView(TemplateView):
+class ListPageView(ListView):
     http_method_names = ['get']
+    model = Post
+    template_name = 'blog.html'
+    paginate_by = 4
+
+    def get_context_data(self, **kwargs):
+        context = super(ListPageView, self).get_context_data(**kwargs)
+        context['url'] = self.request.path + '?'
+        return context
+
+class HomePageView(ListPageView):
     template_name = 'index.html'
 
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, {})
+    def get_context_data(self, **kwargs):
+        context = ListPageView.get_context_data(self, **kwargs)
+        return context
 
 
 class LoginView(View):
