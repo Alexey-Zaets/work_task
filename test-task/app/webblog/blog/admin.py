@@ -1,4 +1,5 @@
 from django.contrib import admin
+from mptt.admin import MPTTModelAdmin
 from .models import Category, Tag, Post, Comment
 
 
@@ -14,6 +15,6 @@ class PostAdmin(admin.ModelAdmin):
     ]
     ordering = ['pub_date', 'title']
 
-admin.site.register(Category)
+admin.site.register(Category, admin.ModelAdmin)
 admin.site.register(Tag)
 admin.site.register(Comment)
