@@ -26,7 +26,6 @@ class LoginView(View):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request, data=request.POST)
-        print(request.POST)
         if form.is_valid():
             username = request.POST.get('username')
             password = request.POST.get('password')
@@ -36,10 +35,8 @@ class LoginView(View):
                     login(request, user)
                     return HttpResponseRedirect('/')
                 else:
-                    # return a 'disabled account' error message
                     return render(request, self.template_name, {'form': form})
             else:
-                # return an 'invalid login' error message
                 return render(request, self.template_name, {'form': form})
         else:
             return render(request, self.template_name, {'form': form})
@@ -58,6 +55,6 @@ class RegisterView(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/login/')
+            return HttpResponseRedirect('/')
         else:
             return render(request, self.template_name, {'form': form})
