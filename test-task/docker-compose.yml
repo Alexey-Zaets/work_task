@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+    ################################
+    # -- Service infrastructure -- #
+    ################################
+    app:
+        restart: always
+        build: ./app
+        tty: true
+        volumes:
+            - ./app:/usr/src/app:rw
+        entrypoint: ./docker_entrypoint.sh
+        command: bash
+        env_file:
+            - ./app/variables.env
+        depends_on:
+            - db
+
+    db:
+        restart: always
+        build: ./db
+        volumes:
+            - ./data/db/task_db:/var/lib/postgresql/data:rw
+
+
+    #################################
+    # -- Balancer infrastructure -- #
+    #################################
+    nginx:
+        restart: always
+        build: ./nginx
+        ports:
+            - 80:80
+        volumes:
+            - ./data/nginx_node/:/var/log/nginx/:rw
+            - ./app/webblog/media:/media:rw
+            - ./app/webblog/static:/static:rw
+        command: ["nginx", "-g", "daemon off;"]
+        depends_on:
+            - app
