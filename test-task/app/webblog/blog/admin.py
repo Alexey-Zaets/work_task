@@ -5,16 +5,18 @@ from .models import Category, Tag, Post, Comment
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    fieldsets = [
-        ('Post', {
-            'fields':(
-                'title', ('category', 'tags'),
-                'content', ('pub_date', 'author'),
-            ),
-        }),
+    fields = [
+        ('title', 'category'), 'tags', 'content', ('pub_date', 'author')
     ]
+    filter_horizontal = ['tags']
+    search_fields = ['title']
     ordering = ['pub_date', 'title']
 
-admin.site.register(Category, admin.ModelAdmin)
+
+class CategoryAdmin(admin.ModelAdmin):
+    fields = [('title', 'parent')]
+    list_display = ['title', 'parent']
+
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Tag)
 admin.site.register(Comment)
