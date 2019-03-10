@@ -16,8 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
-from blog.views import LoginView, HomePageView, RegisterView
 from django.contrib.auth.views import LogoutView
+from blog.views import LoginView, HomePageView, RegisterView, PostPageView, \
+TagListView, CategoryListView
+
 
 urlpatterns = [
     path('', HomePageView.as_view()),
@@ -25,4 +27,7 @@ urlpatterns = [
     path('login/', csrf_exempt(LoginView.as_view())),
     path('logout/', LogoutView.as_view()),
     path('register/', csrf_exempt(RegisterView.as_view())),
+    path('tag/<str:tag>/', TagListView.as_view()),
+    path('post/<int:pk>/', PostPageView.as_view()),
+    path('category/<str:category>/', CategoryListView.as_view()),
 ]

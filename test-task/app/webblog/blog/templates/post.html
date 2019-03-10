@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-md-9">
+    <h1>{{ post.title }}</h1>
+    {% for tag in post_tags %}
+    <a href="/tag/{{ tag.title }}/" class="badge badge-info">{{ tag.title }}</a>
+    {% endfor %}
+    <p>{{ post.content }}</p>
+</div>
+{% endblock %}
+
+{% block pagination %}
+{% endblock %}

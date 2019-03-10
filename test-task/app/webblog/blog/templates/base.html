@@ -11,7 +11,7 @@
 
     {% block header %}
     <header>
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <a class="navbar-brand" href="/">Blog</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -33,9 +33,38 @@
 
     <main role='main' class='flex-shrink-0'>
         <div class='container'>
-            {% block content %}
-            {% endblock %}
+            <div class="row">
+
+                {% block content %}
+                {% endblock %}
+
+                {% block tree %}
+                <div class="col-md-3 ml-auto">
+                    <h3>Categories</h3>
+                    {% load mptt_tags %}
+                    <ul>
+                        {% recursetree category %}
+                            <li>
+                                <a href="/category/{{ node.title }}/">{{ node.title }}</a>
+                                {% if not node.is_leaf_node %}
+                                    <ul class="children">
+                                        {{ children }}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endrecursetree %}
+                    </ul>
+                    <h3>Tags</h3>
+                    {% for tag in tags %}
+                        <a href="/tag/{{ tag.title }}/" class="badge badge-info">{{ tag.title }}</a>
+                    {% endfor %}
+                </div>
+                {% endblock %}
+
+            </div>
         </div>
+
+        {% block pagination %}
         {% for post in object_list %}
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
@@ -61,6 +90,8 @@
             </ul>
         </nav>
         {% endfor %}
+        {% endblock %}
+        
     </main>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

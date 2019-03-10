@@ -6,7 +6,7 @@ from .models import Category, Tag, Post, Comment
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     fields = [
-        ('title', 'category'), 'tags', 'content', ('pub_date', 'author')
+        ('title', 'category'), 'tags', 'content', 'author'
     ]
     filter_horizontal = ['tags']
     search_fields = ['title']

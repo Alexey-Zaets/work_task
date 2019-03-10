@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 
 class Category(models.Model):
     title = models.CharField('Category title', max_length=100, blank=False)
-    description = models.CharField('Description', max_length=200, blank=True)
     parent = TreeForeignKey(
         'self', on_delete=models.CASCADE, null=True,
         blank=True, related_name='children'
@@ -47,9 +46,11 @@ class Post(models.Model):
     )
     tags = models.ManyToManyField(Tag, blank=False)
     content = models.TextField()
-    comments = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    comments = models.ForeignKey(
+        Comment, on_delete=models.CASCADE, blank=True, null=True
+    )
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    pub_date = models.DateField(auto_now_add=False)
+    pub_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.title
