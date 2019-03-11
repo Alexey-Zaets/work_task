@@ -4,10 +4,12 @@ from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
 from .models import Post, Category, Tag
-from .forms import RegisterUserForm
+from .forms import RegisterUserForm, PostForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -15,7 +17,7 @@ class ListPageView(ListView):
     http_method_names = ['get']
     template_name = 'index.html'
     model = Post
-    paginate_by = 10
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(ListPageView, self).get_context_data(**kwargs)
@@ -37,8 +39,7 @@ class BlogPageView(LoginRequiredMixin, ListPageView):
 
     def get_queryset(self):
         qs = super(BlogPageView, self).get_queryset()
-        qs = Post.objects.filter(author=self.request.user)
-        return qs
+        return self.model.objects.filter(author=self.request.user)
 
     def get_context_data(self, *args, **kwargs):
         context = super(BlogPageView, self).get_context_data(**kwargs)
@@ -56,6 +57,77 @@ class PostPageView(DetailView):
         context['tags'] = Tag.objects.all()
         context['category'] = Category.objects.all()
         return context
+
+
+class AddPostView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    http_method_names = ['get', 'post']
+    template_name = 'add_new_post.html'
+    login_url = '/login/'
+
+    def get(self, request, *args, **kwargs):
+        return render(
+            request, self.template_name, {
+                'form': self.form_class(),
+                'tags': Tag.objects.all(),
+                'category': Category.objects.all(),
+            }
+        )
+
+    def post(self, request, *args, **kwargs):
+        author = self.model(author=request.user)
+        form = self.form_class(request.POST, instance=author)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/blog/')
+        else:
+            return render(
+                request, self.template_name, {
+                    'form': form,
+                    'tags': Tag.objects.all(),
+                    'category': Category.objects.all(),
+                }
+            )
+
+
+class UpdatePostView(LoginRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    http_method_names = ['get', 'post']
+    template_name = 'update_post.html'
+    logint_url = '/login/'
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        try:
+            post = self.model.objects.get(id=pk)
+        except Post.DoesNotExist:
+            raise Http404
+        form = self.form_class(instance=post)
+        return render(
+            request, self.template_name, {
+            'form':form, 'pk': pk,
+            'tags': Tag.objects.all(),
+            'category': Category.objects.all(),
+            }
+        )
+
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        post = self.model.objects.get(id=pk)
+        form = self.form_class(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/blog/')
+        else:
+            return render(
+                request, self.template_name, {
+                    'form': form, 'pk': pk,
+                    'tags': Tag.objects.all(),
+                    'category': Category.objects.all()  
+                }
+            )
 
 
 class TagListView(ListPageView):

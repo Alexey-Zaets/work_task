@@ -4,9 +4,12 @@
 <div class="col-md-9 border-bottom">
     <h1>{{ post.title }}</h1>
     {% for tag in post_tags %}
-    <a href="/tag/{{ tag.title }}/" class="badge badge-info">{{ tag.title }}</a>
+        <a href="/tag/{{ tag.title }}/" class="badge badge-info">{{ tag.title }}</a>
     {% endfor %}
-    <p>{{ post.content }}</p>
+    <p class="text-justify text-monospace mt-3">{{ post.content }}</p>
+    {% if user.is_authenticated %}
+        <a href="/post/{{ post.pk }}/edit/" class="btn btn-primary btn-lg btn-block">Update post</a>
+    {% endif %}
 </div>
 {% endblock %}
 
