@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="col-md-9">
+<div class="col-md-9 border-bottom">
     <h1>{{ post.title }}</h1>
     {% for tag in post_tags %}
     <a href="/tag/{{ tag.title }}/" class="badge badge-info">{{ tag.title }}</a>

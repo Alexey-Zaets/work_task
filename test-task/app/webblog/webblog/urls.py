@@ -18,12 +18,13 @@ from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.views import LogoutView
 from blog.views import LoginView, HomePageView, RegisterView, PostPageView, \
-TagListView, CategoryListView
+TagListView, CategoryListView, BlogPageView
 
 
 urlpatterns = [
     path('', HomePageView.as_view()),
     path('admin/', admin.site.urls),
+    path('blog/', BlogPageView.as_view()),
     path('login/', csrf_exempt(LoginView.as_view())),
     path('logout/', LogoutView.as_view()),
     path('register/', csrf_exempt(RegisterView.as_view())),

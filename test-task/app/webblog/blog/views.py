@@ -8,13 +8,14 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Post, Category, Tag
 from .forms import RegisterUserForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class ListPageView(ListView):
     http_method_names = ['get']
     template_name = 'index.html'
     model = Post
-    paginate_by = 4
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super(ListPageView, self).get_context_data(**kwargs)
@@ -25,10 +26,22 @@ class ListPageView(ListView):
 
 
 class HomePageView(ListPageView):
-    template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
         context = super(HomePageView, self).get_context_data(**kwargs)
+        return context
+
+
+class BlogPageView(LoginRequiredMixin, ListPageView):
+    login_url = '/login/'
+
+    def get_queryset(self):
+        qs = super(BlogPageView, self).get_queryset()
+        qs = Post.objects.filter(author=self.request.user)
+        return qs
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(BlogPageView, self).get_context_data(**kwargs)
         return context
 
 
