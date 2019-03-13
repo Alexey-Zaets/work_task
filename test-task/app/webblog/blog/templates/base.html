@@ -65,6 +65,15 @@
                     {% for tag in tags %}
                         <a href="/tag/{{ tag.title }}/" class="badge badge-info">{{ tag.title }}</a>
                     {% endfor %}
+                    <h3>Last 10 comments</h3>
+                    {% for unit in ten %}
+                    <div class="card mt-3" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ unit.author }}</h5>
+                            <p class="card-text">{{ unit.comment }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
                 {% endblock %}
             </div>

@@ -30,6 +30,7 @@ class ListPageView(ListView):
         context['url'] = self.request.path + '?'
         context['tags'] = Tag.objects.all()
         context['category'] = Category.objects.all()
+        context['ten'] = Comment.objects.all().order_by('-pub_date')[:10]
         return context
 
 
@@ -179,6 +180,7 @@ class AddPostView(LoginRequiredMixin, CreateView):
                 'form': self.form_class(),
                 'tags': Tag.objects.all(),
                 'category': Category.objects.all(),
+                'ten': Comment.objects.all().order_by('-pub_date')[:10]
             }
         )
 
@@ -197,6 +199,7 @@ class AddPostView(LoginRequiredMixin, CreateView):
                     'form': form,
                     'tags': Tag.objects.all(),
                     'category': Category.objects.all(),
+                    'ten': Comment.objects.all().order_by('-pub_date')[:10]
                 }
             )
 
@@ -224,6 +227,7 @@ class UpdatePostView(LoginRequiredMixin, UpdateView):
                 'pk': pk,
                 'tags': Tag.objects.all(),
                 'category': Category.objects.all(),
+                'ten': Comment.objects.all().order_by('-pub_date')[:10]
             }
         )
 
