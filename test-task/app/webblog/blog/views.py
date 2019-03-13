@@ -88,6 +88,7 @@ class PostPageView(DetailView):
         )
         context['tags'] = Tag.objects.all()
         context['category'] = Category.objects.all()
+        context['ten'] = Comment.objects.all().order_by('-pub_date')[:10]
         return context
 
 

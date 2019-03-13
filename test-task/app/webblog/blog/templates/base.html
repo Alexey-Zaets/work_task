@@ -69,7 +69,11 @@
                     {% for unit in ten %}
                     <div class="card mt-3" style="width: 18rem;">
                         <div class="card-body">
+                            {% if unit.author is None %}
+                            <h5 class="card-title">Anonymous</h5>
+                            {% else %}
                             <h5 class="card-title">{{ unit.author }}</h5>
+                            {% endif %}
                             <p class="card-text">{{ unit.comment }}</p>
                         </div>
                     </div>
