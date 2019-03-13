@@ -14,10 +14,16 @@ class PostAdmin(admin.ModelAdmin):
     ordering = ['pub_date', 'title']
 
 
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    fields = [('post', 'author', 'level'), 'comments', 'comment' ]
+    list_display = ['post', 'comment', 'author', ]
+
+
 class CategoryAdmin(admin.ModelAdmin):
     fields = [('title', 'parent')]
     list_display = ['title', 'parent']
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Tag)
-admin.site.register(Comment)
+

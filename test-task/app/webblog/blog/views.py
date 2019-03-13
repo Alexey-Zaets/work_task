@@ -84,9 +84,11 @@ class ReplyCommentView(View):
     template_name = 'comment_form.html'
 
     def get(self, request, *args, **kwargs):
+        comment_id = kwargs.get('id')
+        comment = get_object_or_404(Comment, id=comment_id)
         return render(
             request, self.template_name, {
-                'comment_id': kwargs.get('id'),
+                'comment_id': comment_id,
                 'form': self.form_class,
                 'tags': Tag.objects.all(),
                 'category': Category.objects.all(),
@@ -95,16 +97,15 @@ class ReplyCommentView(View):
 
     def post(self, request, *args, **kwargs):
         comment_id = kwargs.get('id')
-        comment = Comment.objects.get(id=comment_id)
+        comment = get_object_or_404(Comment, id=comment_id)
         post = comment.post
         author = request.user
         form = self.form_class(request.POST)
-        if comment.level < 3:
+        if comment.level < 2:
             if form.is_valid():
                 new_comment = form.save(commit=False)
                 new_comment.author, new_comment.post = author, post
                 new_comment.level = comment.level + 1
-                new_comment.parent_id = comment_id
                 new_comment.save()
                 comment.comments.add(new_comment)
                 message = 'Your comment was added'

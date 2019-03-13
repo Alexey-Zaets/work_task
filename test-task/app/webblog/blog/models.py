@@ -53,10 +53,12 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.DO_NOTHING)
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     level = models.IntegerField(default=0)
-    parent_id = models.IntegerField(blank=True, null=True)
     comments = models.ManyToManyField(
         'self', related_name='parent+', symmetrical=False, blank=True
     )
     comment = models.TextField()
     pub_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.comment
 

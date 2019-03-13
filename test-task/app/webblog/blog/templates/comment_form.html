@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 <div class="col-md-9">
     {% if message %}
-    <div class="alert alert-info" role="alert">{{ message }}</div>
+        <div class="alert alert-info" role="alert">{{ message }}</div>
     {% endif %}
     <h3 class="text-center">Reply to comment</h3>
     <form method='post' action='/reply/comment/{{ comment_id }}/'>{% csrf_token %}

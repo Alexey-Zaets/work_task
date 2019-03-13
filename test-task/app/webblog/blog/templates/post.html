@@ -14,17 +14,6 @@
         <h3 class="mt-3">Comments</h3>
         {% load commenttree %}
         {{ comments|commenttree }}
-        <!--{% for comment in comments %}
-        <div class="media position-relative border-bottom mt-2">
-            <div class="media-body">
-                <h5 class="mt-0">{{ comment.author }}</h5>
-                <p>{{ comment.comment }}</p>
-                {% if comment.level < 3 %}
-                    <a href="/reply/comment/{{ comment.id }}/" class="stretched-link">Reply</a>
-                {% endif %}
-            </div>
-        </div>
-        {% endfor %}-->
         <h3 class="mt-3">Add new comment</h3>
         <form method='post' action='/post/{{ post.pk }}/addcomment/'>{% csrf_token %}
             {{ form|crispy }}
