@@ -73,7 +73,8 @@ class AddCommentView(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             new_comment = form.save(commit=False)
-            new_comment.author, new_comment.post = author, post
+            new_comment.author = author if isinstance(author, User) else None
+            new_comment.post = post
             new_comment.save()
         return HttpResponseRedirect('/post/%s' % (kwargs['pk']))
 

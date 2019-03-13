@@ -51,7 +51,9 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.DO_NOTHING)
-    author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    author = models.ForeignKey(
+        User, on_delete=models.DO_NOTHING, blank=True, null=True
+    )
     level = models.IntegerField(default=0)
     comments = models.ManyToManyField(
         'self', related_name='parent+', symmetrical=False, blank=True
