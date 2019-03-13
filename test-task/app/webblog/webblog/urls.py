@@ -18,7 +18,8 @@ from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.views import LogoutView
 from blog.views import LoginView, HomePageView, RegisterView, PostPageView, \
-TagListView, CategoryListView, BlogPageView, AddPostView, UpdatePostView
+TagListView, CategoryListView, BlogPageView, AddPostView, UpdatePostView, \
+AddCommentView, ReplyCommentView
 
 
 urlpatterns = [
@@ -33,4 +34,6 @@ urlpatterns = [
     path('post/<int:pk>/', PostPageView.as_view()),
     path('category/<str:category>/', CategoryListView.as_view()),
     path('post/<int:pk>/edit/', csrf_exempt(UpdatePostView.as_view())),
+    path('post/<int:pk>/addcomment/', csrf_exempt(AddCommentView.as_view())),
+    path('reply/comment/<int:id>/', csrf_exempt(ReplyCommentView.as_view())),
 ]

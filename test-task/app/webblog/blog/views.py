@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
@@ -8,8 +8,8 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Post, Category, Tag
-from .forms import RegisterUserForm, PostForm
+from .models import Post, Category, Tag, Comment
+from .forms import RegisterUserForm, PostForm, CommentForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -53,10 +53,74 @@ class PostPageView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PostPageView, self).get_context_data(**kwargs)
+        context['form'] = CommentForm()
         context['post_tags'] = Tag.objects.filter(post=kwargs['object'])
+        context['comments'] = Comment.objects.filter(
+            post=kwargs['object'], level=0
+        )
         context['tags'] = Tag.objects.all()
         context['category'] = Category.objects.all()
         return context
+
+
+class AddCommentView(View):
+    form_class = CommentForm
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, id=kwargs.get('pk'))
+        author = request.user
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            new_comment = form.save(commit=False)
+            new_comment.author, new_comment.post = author, post
+            new_comment.save()
+        return HttpResponseRedirect('/post/%s' % (kwargs['pk']))
+
+
+class ReplyCommentView(View):
+    form_class = CommentForm
+    http_method_names = ['get', 'post']
+    template_name = 'comment_form.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(
+            request, self.template_name, {
+                'comment_id': kwargs.get('id'),
+                'form': self.form_class,
+                'tags': Tag.objects.all(),
+                'category': Category.objects.all(),
+            }
+        )
+
+    def post(self, request, *args, **kwargs):
+        comment_id = kwargs.get('id')
+        comment = Comment.objects.get(id=comment_id)
+        post = comment.post
+        author = request.user
+        form = self.form_class(request.POST)
+        if comment.level < 3:
+            if form.is_valid():
+                new_comment = form.save(commit=False)
+                new_comment.author, new_comment.post = author, post
+                new_comment.level = comment.level + 1
+                new_comment.parent_id = comment_id
+                new_comment.save()
+                comment.comments.add(new_comment)
+                message = 'Your comment was added'
+            else:
+                message = False
+        else:
+            message = 'You can not add comment'
+        return render(
+            request, self.template_name, {
+                'message': message,
+                'comment_id': comment_id,
+                'form': self.form_class if message else form,
+                'tags': Tag.objects.all(),
+                'category': Category.objects.all(),
+            }
+        )
 
 
 class AddPostView(LoginRequiredMixin, CreateView):
@@ -100,10 +164,7 @@ class UpdatePostView(LoginRequiredMixin, UpdateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
-        try:
-            post = self.model.objects.get(id=pk)
-        except Post.DoesNotExist:
-            raise Http404
+        post = get_object_or_404(self.model, id=pk)
         form = self.form_class(instance=post)
         return render(
             request, self.template_name, {
@@ -183,12 +244,8 @@ class LoginView(View):
                 if user.is_active:
                     login(request, user)
                     return HttpResponseRedirect('/')
-                else:
-                    return render(request, self.template_name, {'form': form})
-            else:
-                return render(request, self.template_name, {'form': form})
-        else:
-            return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form})
+
 
 
 class RegisterView(View):

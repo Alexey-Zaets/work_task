@@ -31,14 +31,6 @@ class Tag(models.Model):
         return self.title
 
 
-class Comment(models.Model):
-    author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    comment = models.TextField()
-
-    def __str__(self):
-        return self.comment
-
-
 class Post(models.Model):
     title = models.CharField('Title', max_length=250, blank=False)
     category = TreeForeignKey(
@@ -46,9 +38,6 @@ class Post(models.Model):
     )
     tags = models.ManyToManyField(Tag, blank=False)
     content = models.TextField()
-    comments = models.ForeignKey(
-        Comment, on_delete=models.CASCADE, blank=True, null=True
-    )
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     pub_date = models.DateTimeField(auto_now_add=True)
 
@@ -58,3 +47,16 @@ class Post(models.Model):
     class Meta:
         ordering = ['-pub_date']
         managed = True
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.DO_NOTHING)
+    author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    level = models.IntegerField(default=0)
+    parent_id = models.IntegerField(blank=True, null=True)
+    comments = models.ManyToManyField(
+        'self', related_name='parent+', symmetrical=False, blank=True
+    )
+    comment = models.TextField()
+    pub_date = models.DateTimeField(auto_now_add=True)
+
