@@ -17,7 +17,7 @@ def get_children(comment):
 @register.filter(name='commenttree')
 def commenttree(query_set):
     count = 0
-    result = '<ul>\n'
+    result = '<ul class="list-group list-group-flush">\n'
     if query_set.exists():
         for comment in query_set:
             reply = link.format(str(comment.id))
@@ -26,19 +26,19 @@ def commenttree(query_set):
                 author = comment.author.username
             else:
                 author = 'Anonymous'
-            result += '<li>\n' + comment_body.format(
+            result += '<li class="list-group-item">\n' + comment_body.format(
                 author, comment.comment, reply
             )
             count += 1
-            childrens = get_children(comment)
-            if childrens.exists():
-                result += commenttree(childrens)
+            children = get_children(comment)
+            if children.exists():
+                result += commenttree(children)
             if count >= 10:
                 break
         result += '</li>\n'
         result += '</ul>'
     else:
-        result = no_comments.format('No comments yes!')
+        result = no_comments.format('No comments yet!')
     return mark_safe(result)
 
 commenttree.is_safe = True

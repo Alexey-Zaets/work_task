@@ -63,7 +63,7 @@ class PostPageView(DetailView):
         return context
 
 
-class AddCommentView(View):
+class AddCommentView(CreateView):
     form_class = CommentForm
     http_method_names = ['post']
 
@@ -79,7 +79,7 @@ class AddCommentView(View):
         return HttpResponseRedirect('/post/%s' % (kwargs['pk']))
 
 
-class ReplyCommentView(View):
+class ReplyCommentView(CreateView):
     form_class = CommentForm
     http_method_names = ['get', 'post']
     template_name = 'comment_form.html'
