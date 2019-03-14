@@ -66,7 +66,7 @@
                         <a href="{% url 'tag' tag.title %}" class="badge badge-info">{{ tag.title }}</a>
                     {% endfor %}
                     <h3>Last 10 comments</h3>
-                    {% for unit in ten %}
+                    {% for unit in ten|slice:"10" %}
                     <div class="card mt-3" style="width: 18rem;">
                         <div class="card-body">
                             {% if unit.author is None %}
