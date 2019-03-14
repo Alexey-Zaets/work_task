@@ -11,12 +11,6 @@ COMMENT_BODY = '''<div class="media position-relative border-bottom mt-2">
 
 register = template.Library()
 
-def get_children(comment):
-    '''
-    The function returns nested responses to the comment.
-    '''
-    return comment.comments.all()
-
 @register.filter(name='commenttree')
 def commenttree(query_set):
     '''
@@ -36,7 +30,7 @@ def commenttree(query_set):
                 author, comment.comment, reply
             )
             count += 1
-            children = get_children(comment)
+            children = comment.get_children
             if children.exists():
                 result += commenttree(children)
             if count >= 10:

@@ -84,6 +84,14 @@ class Comment(models.Model):
     comment = models.TextField()
     pub_date = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def get_children(self):
+        '''
+        The method returns nested responses to the comment.
+        '''
+        return self.comments.all()
+    
+
     def get_absolute_url(self):
         '''
         The method returns the URL of the post to which the comment belongs.
