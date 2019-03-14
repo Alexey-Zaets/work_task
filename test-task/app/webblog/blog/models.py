@@ -7,7 +7,9 @@ class Category(models.Model):
     '''
     The class describes the category table in the database.
     '''
-    title = models.CharField('Category title', max_length=100, blank=False)
+    title = models.CharField(
+        'Category title', max_length=100, blank=False, unique=True
+    )
     parent = mptt.models.TreeForeignKey(
         'self', on_delete=models.CASCADE, null=True,
         blank=True, related_name='children'
