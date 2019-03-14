@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
 import mptt
@@ -98,7 +99,7 @@ class Comment(models.Model):
         '''
         The method returns the URL of the post to which the comment belongs.
         '''
-        return '/post/{}/'.format(self.post.id)
+        return reverse('post', args=(self.post.id,))
 
     def __str__(self):
         '''

@@ -12,27 +12,27 @@
     {% block header %}
     <header>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="{% url 'home' %}">Main</a>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 {% if user.is_authenticated %}
                     <ul class="navbar-nav">
                         <li class="nav-item active">
-                            <a class="nav-link" href="/blog/">Blog</a>
+                            <a class="nav-link" href="{% url 'blog' %}">Blog</a>
                         </li>
                         <li class="nav-item active">
-                            <a href="/add/" class="nav-link">+ Add new post</a>
+                            <a href="{% url 'add_post' %}" class="nav-link">+ Add new post</a>
                         </li>
                     </ul>
                 {% endif %}
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="/login/">Sign in</a>
+                        <a class="nav-link" href="{% url 'login' %}">Sign in</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="/register/">Sign up</a>
+                        <a class="nav-link" href="{% url 'register' %}">Sign up</a>
                     </li>
                 </ul>
-                <a href="/logout/" class="btn btn-primary">Sign out</a>
+                <a href="{% url 'logout' %}" class="btn btn-primary">Sign out</a>
             </div>
         </nav>
     </header>
@@ -52,7 +52,7 @@
                     <ul class="border-bottom">
                         {% recursetree category %}
                             <li>
-                                <a href="/category/{{ node.title }}/">{{ node.title }}</a>
+                                <a href="{% url 'category' node.title %}">{{ node.title }}</a>
                                 {% if not node.is_leaf_node %}
                                     <ul class="children">
                                         {{ children }}
@@ -63,7 +63,7 @@
                     </ul>
                     <h3>Tags</h3>
                     {% for tag in tags %}
-                        <a href="/tag/{{ tag.title }}/" class="badge badge-info">{{ tag.title }}</a>
+                        <a href="{% url 'tag' tag.title %}" class="badge badge-info">{{ tag.title }}</a>
                     {% endfor %}
                     <h3>Last 10 comments</h3>
                     {% for unit in ten %}

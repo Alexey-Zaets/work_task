@@ -23,17 +23,33 @@ AddCommentView, ReplyCommentView
 
 
 urlpatterns = [
-    path('', HomePageView.as_view()),
-    path('add/', csrf_exempt(AddPostView.as_view())),
-    path('blog/', BlogPageView.as_view()),
+    path('', HomePageView.as_view(), name='home'),
+    path('add/', csrf_exempt(AddPostView.as_view()), name='add_post'),
+    path('blog/', BlogPageView.as_view(), name='blog'),
     path('admin/', admin.site.urls),
-    path('login/', csrf_exempt(LoginView.as_view())),
-    path('logout/', LogoutView.as_view()),
-    path('register/', csrf_exempt(RegisterView.as_view())),
-    path('tag/<str:tag>/', TagListView.as_view()),
-    path('post/<int:pk>/', PostPageView.as_view()),
-    path('category/<str:category>/', CategoryListView.as_view()),
-    path('post/<int:pk>/edit/', csrf_exempt(UpdatePostView.as_view())),
-    path('post/<int:pk>/addcomment/', csrf_exempt(AddCommentView.as_view())),
-    path('reply/comment/<int:id>/', csrf_exempt(ReplyCommentView.as_view())),
+    path('login/', csrf_exempt(LoginView.as_view()), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('register/', csrf_exempt(RegisterView.as_view()), name='register'),
+    path('tag/<str:tag>/', TagListView.as_view(), name='tag'),
+    path('post/<int:pk>/', PostPageView.as_view(), name='post'),
+    path(
+        'category/<str:category>/',
+        CategoryListView.as_view(),
+        name='category'
+    ),
+    path(
+        'post/<int:pk>/edit/',
+        csrf_exempt(UpdatePostView.as_view()),
+        name='post_edit'
+    ),
+    path(
+        'post/<int:pk>/addcomment/',
+        csrf_exempt(AddCommentView.as_view()),
+        name='add_comment'
+    ),
+    path(
+        'reply/comment/<int:id>/',
+        csrf_exempt(ReplyCommentView.as_view()),
+        name='reply_comment'
+    ),
 ]

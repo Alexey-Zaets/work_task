@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 <div class="col-md-9">
     <h1 class="text-center">Add new post</h1>
-    <form method='post' action='/add/'>{% csrf_token %}
+    <form method='post' action="{% url 'add_post' %}">{% csrf_token %}
         <div class='row justify-content-center'>
             <div class='col-9'>
                 {{ form|crispy }}

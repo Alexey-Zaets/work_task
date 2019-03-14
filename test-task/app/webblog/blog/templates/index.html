@@ -3,7 +3,7 @@
 {% block content %}
 <div class="col-md-9">
     {% for post in object_list %}
-        <h3><a href="/post/{{ post.id }}/">{{ post.title }}</a></h3>
+        <h3><a href="{% url 'post' post.id %}">{{ post.title }}</a></h3>
     {% empty %}
         <div class="alert alert-info" role="alert">Sorry, this page is empty!</div>
     {% endfor %}
