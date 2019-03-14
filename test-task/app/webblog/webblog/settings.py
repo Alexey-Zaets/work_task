@@ -135,3 +135,32 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 LOGOUT_REDIRECT_URL = '/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existings_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers' : {
+        'django.request': {
+            'handlers':['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.template': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.db.backends':{
+            'handlers':['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
