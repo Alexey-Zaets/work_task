@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from blog.models import Post
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
@@ -24,3 +25,12 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             user.set_password(validated_data['password'])
             user.save()
             return user
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = (
+            'id', 'title', 'category', 'tags',
+            'content', 'author', 'pub_date'
+        )

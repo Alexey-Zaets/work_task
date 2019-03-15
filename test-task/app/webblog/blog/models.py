@@ -37,7 +37,7 @@ class Tag(models.Model):
     '''
     The class describes the tag table in the database.
     '''
-    title = models.CharField('Tag title', max_length=60)
+    title = models.CharField('Tag title', max_length=60, unique=True)
 
     def __str__(self):
         '''
