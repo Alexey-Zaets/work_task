@@ -14,7 +14,7 @@ class AccountTest(APITestCase):
     invalid_email = fake.text(max_nb_chars=10)
 
     def test_register_user(self):
-        url = reverse('user-register')
+        url = reverse('user_register')
         data = {
             'username': self.name,
             'email': self.email,
@@ -27,7 +27,7 @@ class AccountTest(APITestCase):
         )
 
     def test_register_user_with_an_existing_name(self):
-        url = reverse('user-register')
+        url = reverse('user_register')
         data = {
             'username': self.name,
             'email': fake.email(),
@@ -37,7 +37,7 @@ class AccountTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_register_user_with_an_existing_email(self):
-        url = reverse('user-register')
+        url = reverse('user_register')
         data = {
             'username': fake.name(),
             'email': self.email,
@@ -47,7 +47,7 @@ class AccountTest(APITestCase):
         assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_register_user_with_invalid_email(self):
-        url = reverse('user-register')
+        url = reverse('user_register')
         data = {
             'username': fake.name(),
             'email': self.invalid_email,
@@ -57,7 +57,19 @@ class AccountTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_login_user(self):
-        url = reverse('user-login')
+        url = reverse('user_login')
         data = {'username': self.name, 'password': self.password}
         respons = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_login_user_with_invalid_password(self):
+        url = reverse('user_login')
+        data = {'username': self.name, 'password': fake.password()}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_user_with_invalid_username(self):
+        url = reverse('user_login')
+        data = {'username': fake.name(), 'password': self.password}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
