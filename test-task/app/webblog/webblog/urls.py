@@ -20,6 +20,10 @@ from django.contrib.auth.views import LogoutView
 from blog.views import LoginView, HomePageView, RegisterView, PostPageView, \
 TagListView, CategoryListView, BlogPageView, AddPostView, UpdatePostView, \
 AddCommentView, ReplyCommentView
+from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework.schemas import get_schema_view
+from rest_framework_jwt.views import obtain_jwt_token
+from blog.api import RegisterUserView
 
 
 urlpatterns = [
@@ -53,3 +57,15 @@ urlpatterns = [
         name='reply_comment'
     ),
 ]
+
+schema_view = get_schema_view(title='Blog API')
+
+urlpatterns += format_suffix_patterns([
+    path('api/v1/', schema_view),
+    path('api/v1/user/login/', obtain_jwt_token, name='user_login'),
+    path(
+        'api/v1/user/register/',
+        RegisterUserView.as_view(),
+        name='user_register'
+    )
+])
