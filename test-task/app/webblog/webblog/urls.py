@@ -71,11 +71,11 @@ urlpatterns += format_suffix_patterns([
     path(
         'api/v1/post/',
         PostViewSet.as_view({'get': 'list'}),
-        name='post_list'
+        name='post_list',
     ),
     path(
         'api/v1/post/<int:pk>/',
-        PostViewSet.as_view({'get': 'detail'}),
-        name='post_detail'
+        PostViewSet.as_view({'get': 'retrieve'}),
+        name='post_detail',
     ),
 ])

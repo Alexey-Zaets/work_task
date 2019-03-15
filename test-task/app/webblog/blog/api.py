@@ -14,7 +14,16 @@ class RegisterUserView(CreateAPIView):
     permission_classes = (AllowAny,)
     
 
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (AllowAny,)
+class PostViewSet(viewsets.ViewSet):
+
+    def list(self, request):
+        queryset = Post.objects.all()
+        serializer = PostSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk):
+        queryset = Post.objects.all()
+        post = get_object_or_404(queryset, pk=pk)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+
