@@ -18,4 +18,3 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (AllowAny,)
-    lookup_url_kwarg = 'pk'
