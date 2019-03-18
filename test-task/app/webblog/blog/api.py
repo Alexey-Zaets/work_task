@@ -35,6 +35,14 @@ class PostViewSet(viewsets.ViewSet):
         serializer.save(author=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def update(self, request, pk):
+        queryset = Post.objects.all()
+        post = get_object_or_404(queryset, pk=pk)
+        serializer = PostSerializer(post, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             permission_classes = [AllowAny]
@@ -62,6 +70,21 @@ class TagViewSet(viewsets.ViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def update(self, request, pk):
+        queryset = Tag.objects.all()
+        tag = get_object_or_404(queryset, pk=pk)
+        serializer = TagSerializer(tag, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_permission(self):
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permisson() for permission in permission_classes]
+
 
 class CategoryViewSet(viewsets.ViewSet):
 
@@ -81,3 +104,18 @@ class CategoryViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, pk):
+        queryset = Category.objects.all()
+        category = get_object_or_404(queryset, pk=pk)
+        serializer = CategorySerializer(category, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_permission(self):
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permisson() for permission in permission_classes]

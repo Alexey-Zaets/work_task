@@ -75,7 +75,7 @@ urlpatterns += format_suffix_patterns([
     ),
     path(
         'api/v1/post/<int:pk>/',
-        PostViewSet.as_view({'get': 'retrieve'}),
+        PostViewSet.as_view({'get': 'retrieve', 'patch': 'update'}),
         name='post_detail',
     ),
     path(
@@ -85,7 +85,7 @@ urlpatterns += format_suffix_patterns([
     ),
     path(
         'api/v1/tag/<int:pk>/',
-        TagViewSet.as_view({'get': 'retrieve'}),
+        TagViewSet.as_view({'get': 'retrieve', 'patch': 'update'}),
         name='tag_detail'
     ),
     path(
@@ -95,7 +95,7 @@ urlpatterns += format_suffix_patterns([
     ),
     path(
         'api/v1/category/<int:pk>/',
-        CategoryViewSet.as_view({'get': 'retrieve'}),
+        CategoryViewSet.as_view({'get': 'retrieve', 'patch': 'update'}),
         name='category_detail'
         )
 ])

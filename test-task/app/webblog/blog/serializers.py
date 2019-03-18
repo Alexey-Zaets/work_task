@@ -30,7 +30,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('id', 'title')
+        fields = ('id', 'title', 'parent')
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -50,3 +50,14 @@ class PostSerializer(serializers.ModelSerializer):
             'id', 'title', 'category', 'tags',
             'content', 'author', 'pub_date'
         )
+
+    def create(self, validated_data):
+        tags = validated_data.get('tags')
+        tags = [Tag.get_or_create(title=tag)[0] for tag in tags]
+        post = Post(
+            title=validated_data['title'],
+            category=validated_data['category'],
+            content=validated_data['content'],
+        )
+        post.tags.add(*tags)
+        return post
