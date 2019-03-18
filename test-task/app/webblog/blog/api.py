@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework.generics import CreateAPIView, ListAPIView
 from blog.serializers import RegisterUserSerializer, PostSerializer, \
 TagSerializer, CategorySerializer, CommentSerializer
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -20,9 +20,9 @@ class CustomPermissionMixin:
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
-            permission_classes = [AllowAny]
+            self.permission_classes = [AllowAny]
         else:
-            permission_classes = [IsAuthenticated]
+            self.permission_classes = [IsAdminUser]
         return [permission() for permission in self.permission_classes]
     
 
@@ -41,6 +41,25 @@ class CategoryViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
     serializer_class = CategorySerializer
 
 
-class CommentViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
+class LastTenCommentsViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()[:10]
+    serializer_class = CommentSerializer
+    permission_classes = (AllowAny,)
+
+
+class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(author=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'create']:
+            self.permission_classes = [AllowAny]
+        else:
+            self.permission_classes = [IsAdminUser]
+        return [permission() for permission in self.permission_classes]

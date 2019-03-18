@@ -24,7 +24,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.schemas import get_schema_view
 from rest_framework_jwt.views import obtain_jwt_token
 from blog.api import RegisterUserView, PostViewSet, TagViewSet, \
-CategoryViewSet, CommentViewSet
+CategoryViewSet, CommentViewSet, LastTenCommentsViewSet
 
 
 urlpatterns = [
@@ -76,7 +76,11 @@ urlpatterns += format_suffix_patterns([
     ),
     path(
         'api/v1/post/<int:pk>/',
-        PostViewSet.as_view({'get': 'retrieve', 'patch': 'update'}),
+        PostViewSet.as_view({
+            'get': 'retrieve',
+            'patch': 'update',
+            'delete': 'destroy'
+        }),
         name='post_detail',
     ),
     path(
@@ -86,7 +90,11 @@ urlpatterns += format_suffix_patterns([
     ),
     path(
         'api/v1/tag/<int:pk>/',
-        TagViewSet.as_view({'get': 'retrieve', 'patch': 'update'}),
+        TagViewSet.as_view({
+            'get': 'retrieve',
+            'patch': 'update',
+            'delete': 'destroy'
+        }),
         name='tag_detail'
     ),
     path(
@@ -96,7 +104,11 @@ urlpatterns += format_suffix_patterns([
     ),
     path(
         'api/v1/category/<int:pk>/',
-        CategoryViewSet.as_view({'get': 'retrieve', 'patch': 'update'}),
+        CategoryViewSet.as_view({
+            'get': 'retrieve',
+            'patch': 'update',
+            'delete': 'destroy'
+        }),
         name='category_detail'
     ),
     path(
@@ -106,7 +118,16 @@ urlpatterns += format_suffix_patterns([
     ),
     path(
         'api/v1/comment/<int:pk>/',
-        CommentViewSet.as_view({'get': 'retrieve', 'patch': 'update'}),
+        CommentViewSet.as_view({
+            'get': 'retrieve',
+            'patch': 'update',
+            'delete': 'destroy'
+        }),
         name='comment_detail'
     ),
+    path(
+        'api/v1/lastcomment/',
+        LastTenCommentsViewSet.as_view({'get': 'list'}),
+        name='lastcomment_list'
+    )
 ])
