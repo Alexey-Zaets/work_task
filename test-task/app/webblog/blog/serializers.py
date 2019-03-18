@@ -63,17 +63,6 @@ class PostSerializer(serializers.ModelSerializer):
             'content', 'comment_set', 'author', 'pub_date'
         )
 
-    # def create(self, validated_data):
-    #     tags = validated_data.get('tags')
-    #     tags = [Tag.get_or_create(title=tag)[0] for tag in tags]
-    #     post = Post(
-    #         title=validated_data['title'],
-    #         category=validated_data['category'],
-    #         content=validated_data['content'],
-    #     )
-    #     post.tags.add(*tags)
-    #     return post
-
 
 class CommentSerializer(serializers.ModelSerializer):
     post = PostSerializer(read_only=True)

@@ -14,11 +14,9 @@ class RegisterUserView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterUserSerializer
     permission_classes = (AllowAny,)
-    
 
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+
+class CustomPermissionMixin:
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -26,39 +24,23 @@ class PostViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in self.permission_classes]
+    
+
+class PostViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
-    def get_permission(self):
-        if self.action in ['list', 'retrieve']:
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthenticated]
-        return [permisson() for permission in self.permission_classes]
 
-
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
-    def get_permission(self):
-        if self.action in ['list', 'retrieve']:
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthenticated]
-        return [permisson() for permission in self.permission_classes]
 
-
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-
-    def get_permission(self):
-        if self.action in ['list', 'retrieve']:
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthenticated]
-        return [permisson() for permission in self.permission_classes]
