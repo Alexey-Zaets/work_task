@@ -23,7 +23,7 @@ AddCommentView, ReplyCommentView
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.schemas import get_schema_view
 from rest_framework_jwt.views import obtain_jwt_token
-from blog.api import RegisterUserView, PostViewSet
+from blog.api import RegisterUserView, PostViewSet, TagViewSet, CategoryViewSet
 
 
 urlpatterns = [
@@ -70,7 +70,7 @@ urlpatterns += format_suffix_patterns([
     ),
     path(
         'api/v1/post/',
-        PostViewSet.as_view({'get': 'list'}),
+        PostViewSet.as_view({'get': 'list', 'post': 'create'}),
         name='post_list',
     ),
     path(
@@ -78,4 +78,24 @@ urlpatterns += format_suffix_patterns([
         PostViewSet.as_view({'get': 'retrieve'}),
         name='post_detail',
     ),
+    path(
+        'api/v1/tag/',
+        TagViewSet.as_view({'get': 'list', 'post': 'create'}),
+        name='tag_list'
+    ),
+    path(
+        'api/v1/tag/<int:pk>/',
+        TagViewSet.as_view({'get': 'retrieve'}),
+        name='tag_detail'
+    ),
+    path(
+        'api/v1/category/',
+        CategoryViewSet.as_view({'get': 'list', 'post': 'create'}),
+        name='category_list',
+    ),
+    path(
+        'api/v1/category/<int:pk>/',
+        CategoryViewSet.as_view({'get': 'retrieve'}),
+        name='category_detail'
+        )
 ])

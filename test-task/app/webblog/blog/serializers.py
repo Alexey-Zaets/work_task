@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from blog.models import Post
+from blog.models import Post, Category, Tag
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
@@ -27,7 +27,23 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             return user
 
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'title')
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'
+
+
 class PostSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+    category = CategorySerializer()
+    tags = TagSerializer(many=True)
+
     class Meta:
         model = Post
         fields = (
