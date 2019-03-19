@@ -5,4 +5,4 @@ RUN apt-get update
 RUN apt-get install -y coreutils net-tools htop iotop less nano
 
 # run init script
-ADD init.sql /docker-entrypoint-initdb.d/
+# ADD init.sql /docker-entrypoint-initdb.d/

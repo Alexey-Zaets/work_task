@@ -24,7 +24,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.schemas import get_schema_view
 from rest_framework_jwt.views import obtain_jwt_token
 from blog.api import RegisterUserView, PostViewSet, TagViewSet, \
-CategoryViewSet, CommentViewSet, LastTenCommentsViewSet
+CategoryViewSet, CommentViewSet, LastTenCommentsViewSet, UserViewSet
 
 
 urlpatterns = [
@@ -63,6 +63,16 @@ schema_view = get_schema_view(title='Blog API')
 
 urlpatterns += format_suffix_patterns([
     path('api/v1/', schema_view),
+    path(
+        'api/v1/user/',
+        UserViewSet.as_view({'get': 'list'}),
+        name='user_list'
+    ),
+    path(
+        'api/v1/user/<int:pk>/',
+        UserViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'}),
+        name='user_detail'
+    ),
     path('api/v1/user/login/', obtain_jwt_token, name='user_login'),
     path(
         'api/v1/user/register/',

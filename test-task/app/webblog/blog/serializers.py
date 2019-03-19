@@ -7,7 +7,8 @@ from blog.models import Post, Category, Tag, Comment
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username')
+        fields = ('id', 'username', 'email', 'is_superuser')
+
 
 class RegisterUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
