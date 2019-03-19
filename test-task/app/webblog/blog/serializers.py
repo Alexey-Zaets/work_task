@@ -5,12 +5,18 @@ from blog.models import Post, Category, Tag, Comment
 
 
 class UserSerializer(serializers.ModelSerializer):
+    '''
+    Serialization of User model data
+    '''
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'is_superuser')
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
+    '''
+    Data serialization for user registration
+    '''
     email = serializers.EmailField(
         validators=[UniqueValidator(
             queryset=User.objects.all(),
@@ -24,6 +30,9 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
         def create(self, validated_data):
+            '''
+            Create user. Returns user object
+            '''
             user = User(
                 username=validated_data['username'],
                 email=validated_data['email']
@@ -34,28 +43,45 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    '''
+    Serialization of Category model data
+    '''
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),
+    )
     class Meta:
         model = Category
-        fields = ('id', 'title', 'parent')
+        fields = ('title', 'parent')
 
 
 class TagSerializer(serializers.ModelSerializer):
+    '''
+    Serialization of Tag model data
+    '''
     class Meta:
         model = Tag
         fields = '__all__'
 
 
-class PostCommentSerializer(serializers.ModelSerializer):
+class CommentPostSerializer(serializers.ModelSerializer):
+    '''
+    Serialization of Comment model data for Post model
+    '''
     class Meta:
         model = Comment
-        fields = ('id', 'comment')
+        fields = ('id', 'comment', 'level')
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)
+    '''
+    Serialization of Post model data
+    '''
+    author = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all()
+    )
     category = CategorySerializer()
     tags = TagSerializer(many=True)
-    comment_set = PostCommentSerializer(many=True)
+    comment_set = CommentPostSerializer(many=True)
 
     class Meta:
         model = Post
@@ -66,7 +92,10 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    post = PostSerializer()
+    '''
+    Serialization of Comment data
+    '''
+    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
     author = UserSerializer()
 
     class Meta:
