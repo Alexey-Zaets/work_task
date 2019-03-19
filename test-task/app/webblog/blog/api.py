@@ -1,13 +1,11 @@
-from rest_framework import status
 from django.contrib.auth.models import User
-from rest_framework.generics import CreateAPIView, ListAPIView
-from blog.serializers import RegisterUserSerializer, PostSerializer, \
-TagSerializer, CategorySerializer, CommentSerializer, UserSerializer
+from rest_framework import status, viewsets
+from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
 from rest_framework.response import Response
 from blog.models import Post, Tag, Category, Comment
+from blog.serializers import RegisterUserSerializer, PostSerializer, \
+TagSerializer, CategorySerializer, CommentSerializer, UserSerializer
 
 
 class CustomPermissionMixin:
@@ -24,7 +22,7 @@ class CustomPermissionMixin:
         else:
             self.permission_classes = [IsAdminUser,]
         return [permission() for permission in self.permission_classes]
-    
+
 
 class UserViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
     '''
