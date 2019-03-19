@@ -20,8 +20,7 @@ class AccountTest(APITestCase):
             username='test',
             email='test@email.com',
             password='testpassword',
-        )
-        
+        )  
 
     def test_register_user(self):
         url = reverse('user_register')
