@@ -1,5 +1,4 @@
 data/*
-app/data/
 app/static/
 app/webblog/static/
 app/webblog/media/
@@ -7,4 +6,5 @@ app/webblog/webblog/__pycache__/
 app/webblog/blog/__pycache__/
 app/webblog/blog/migrations/__pycache__/
 app/webblog/blog/templatetags/__pycache__/
-app/debug.log/
+app/debug.log
+app/webblog/debug.log
