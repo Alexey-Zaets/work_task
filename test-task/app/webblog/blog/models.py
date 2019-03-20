@@ -53,7 +53,7 @@ class Post(models.Model):
     '''
     title = models.CharField('Title', max_length=250, blank=False)
     category = models.ForeignKey(
-        Category, on_delete=models.DO_NOTHING, blank=False
+        Category, on_delete=models.SET_NULL, blank=False, null=True
     )
     tags = models.ManyToManyField(Tag, blank=False)
     content = models.TextField()

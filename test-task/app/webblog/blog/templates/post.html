@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load commenttree %}
 
 {% block content %}
     <div class="col-md-9">
@@ -10,9 +12,7 @@
         {% if user.is_authenticated %}
             <a href="{% url 'post_edit' post.pk %}" class="btn btn-primary btn-lg btn-block">Update post</a>
         {% endif %}
-        {% load crispy_forms_tags %}
         <h3 class="mt-3">Comments</h3>
-        {% load commenttree %}
         {{ comments|commenttree }}
         <h3 class="mt-3">Add new comment</h3>
         <form method='post' action="{% url 'add_comment' post.pk %}">{% csrf_token %}

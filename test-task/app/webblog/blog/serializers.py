@@ -48,6 +48,7 @@ class CategorySerializer(serializers.ModelSerializer):
     '''
     parent = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(),
+        allow_null=True,
     )
     class Meta:
         model = Category
@@ -69,7 +70,7 @@ class CommentPostSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = Comment
-        fields = ('id', 'comment', 'level')
+        fields = ('id', 'author', 'comment', 'level')
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -96,7 +97,7 @@ class CommentSerializer(serializers.ModelSerializer):
     Serialization of Comment data
     '''
     post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
-    author = UserSerializer()
+    author = UserSerializer(allow_null=True)
 
     class Meta:
         model = Comment
