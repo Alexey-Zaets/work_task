@@ -262,18 +262,87 @@ class CommentTest(CustomAPITestCase):
     @classmethod
     def setUpTestData(cls):
         User.objects.create_user(
-            username=ADMIN_NAME,
+            username=ADMIN_NAME, 
             email=ADMIN_EMAIL,
             password=ADMIN_PASSWORD,
             is_staff=True,
             is_superuser=True
         )
+        user = User.objects.get(username=ADMIN_NAME)
         Category.objects.create(title='News')
+        category = Category.objects.get(title='News')
         Tag.objects.create(title='testtag')
+        tag = Tag.objects.get(title='testtag')
+        post = Post(
+            title='First post',
+            category=category,
+            author=user,
+            content='Test content'
+        )
+        post.save()
+        post.tags.add(tag)
+        post.save()
         Comment.objects.create(
+            post=post,
+            author=user,
+            comment='Test comment'
         )
 
     def test_get_comment_list(self):
         url = reverse('comment_list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_anonymous_user_create_comment(self):
+        url = reverse('comment_list')
+        post = Post.objects.get(title='First post')
+        data = {'post': post.id, 'comment': 'First comment'}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            Comment.objects.get(comment='First comment').author,
+            None
+        )
+
+    def test_authenticated_user_create_comment(self):
+        self.login_admin_and_set_credentials()
+        url = reverse('comment_list')
+        post = Post.objects.get(title='First post')
+        data = {'post': post.id, 'comment': 'First comment'}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            Comment.objects.get(comment='First comment').author.username,
+            ADMIN_NAME
+        )
+
+    def test_update_comment(self):
+        self.login_admin_and_set_credentials()
+        author = User.objects.get(username=ADMIN_NAME)
+        post = Post.objects.get(author=author)
+        comment = Comment.objects.get(author=author)
+        data = {
+            'post': post.id,
+            'author': author.id,
+            'level': 1,
+            'comment': 'Second comment'
+        }
+        response = self.client.patch(
+            'http://0.0.0.0/api/v1/comment/{}/'.format(comment.id),
+            data
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(Comment.objects.get(comment='Second comment'))
+
+    def test_delete_comment(self):
+        self.login_admin_and_set_credentials()
+        admin = User.objects.get(username=ADMIN_NAME)
+        comment = Comment.objects.get(author=admin.id)
+        response = self.client.delete(
+            'http://0.0.0.0/api/v1/comment/{}/'.format(comment.id)
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class PostTest(CustomAPITestCase):
+    pass

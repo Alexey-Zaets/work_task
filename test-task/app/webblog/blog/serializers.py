@@ -82,7 +82,7 @@ class PostSerializer(serializers.ModelSerializer):
     )
     category = CategorySerializer()
     tags = TagSerializer(many=True)
-    comment_set = CommentPostSerializer(many=True)
+    comment_set = CommentPostSerializer(read_only=True, many=True)
 
     class Meta:
         model = Post
@@ -97,8 +97,8 @@ class CommentSerializer(serializers.ModelSerializer):
     Serialization of Comment data
     '''
     post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
-    author = UserSerializer(allow_null=True)
 
     class Meta:
         model = Comment
         fields = '__all__'
+        read_only_fields = ('comments', 'pub_date',)
