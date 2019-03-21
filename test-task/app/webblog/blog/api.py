@@ -5,7 +5,8 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from blog.models import Post, Tag, Category, Comment
 from blog.serializers import RegisterUserSerializer, PostSerializer, \
-TagSerializer, CategorySerializer, CommentSerializer, UserSerializer
+TagSerializer, CategorySerializer, CommentSerializer, UserSerializer, \
+PostReadSerializer, CommentReadSerializer
 
 
 class CustomPermissionMixin:
@@ -55,6 +56,11 @@ class PostViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return PostReadSerializer
+        return PostSerializer
+
 
 class TagViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
     '''
@@ -77,7 +83,7 @@ class LastTenCommentsViewSet(viewsets.ModelViewSet):
     Processes requests for data retrieval by last 10 comments
     '''
     queryset = Comment.objects.all()[:10]
-    serializer_class = CommentSerializer
+    serializer_class = CommentReadSerializer
     permission_classes = (AllowAny,)
 
 
@@ -87,6 +93,11 @@ class CommentViewSet(viewsets.ModelViewSet):
     '''
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return CommentReadSerializer
+        return CommentSerializer
 
     def create(self, request):
         '''

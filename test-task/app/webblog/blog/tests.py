@@ -345,4 +345,78 @@ class CommentTest(CustomAPITestCase):
 
 
 class PostTest(CustomAPITestCase):
-    pass
+
+    @classmethod
+    def setUpTestData(cls):
+        User.objects.create_user(
+            username=ADMIN_NAME, 
+            email=ADMIN_EMAIL,
+            password=ADMIN_PASSWORD,
+            is_staff=True,
+            is_superuser=True
+        )
+        user = User.objects.get(username=ADMIN_NAME)
+        Category.objects.create(title='News')
+        category = Category.objects.get(title='News')
+        Tag.objects.create(title='testtag')
+        tag = Tag.objects.get(title='testtag')
+        post = Post(
+            title='First post',
+            category=category,
+            author=user,
+            content='Test content'
+        )
+        post.save()
+        post.tags.add(tag)
+        post.save()
+
+    def test_get_post_list(self):
+        url = reverse('post_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_create_new_post(self):
+        self.login_admin_and_set_credentials()
+        url = reverse('post_list')
+        tag = Tag.objects.get(title='testtag')
+        category = Category.objects.get(title='News')
+        user = User.objects.get(username=ADMIN_NAME)
+        data = {
+            'title': 'New post',
+            'category': category.id,
+            'tags': [tag.id,],
+            'content': 'New test content',
+            'author': user.id
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(Post.objects.get(title='New post'))
+
+    def test_upadte_post(self):
+        self.login_admin_and_set_credentials()
+        post = Post.objects.get(title='First post')
+        data = {
+            'title': 'Updated post',
+            'content': 'Changed content',
+            'author': post.author.id,
+            'tags': [tag.id for tag in post.tags.all()],
+            'category': post.category.id
+        }
+        response = self.client.patch(
+            'http://0.0.0.0/api/v1/post/{}/'.format(post.id),
+            data
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(Post.objects.get(title='Updated post'))
+        self.assertEqual(
+            Post.objects.get(title='Updated post').content,
+            'Changed content'
+        )
+
+    def test_delete_post(self):
+        self.login_admin_and_set_credentials()
+        post = Post.objects.get(title='First post')
+        response = self.client.delete(
+            'http://0.0.0.0/api/v1/post/{}/'.format(post.id)
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

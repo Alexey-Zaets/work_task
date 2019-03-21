@@ -49,10 +49,12 @@ class CategorySerializer(serializers.ModelSerializer):
     parent = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(),
         allow_null=True,
+        required=False,
     )
+
     class Meta:
         model = Category
-        fields = ('title', 'parent')
+        fields = ('id', 'title', 'parent')
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -64,25 +66,36 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CommentPostSerializer(serializers.ModelSerializer):
+class CommentReadSerializer(serializers.ModelSerializer):
     '''
     Serialization of Comment model data for Post model
     '''
+    author = UserSerializer()
+
     class Meta:
         model = Comment
-        fields = ('id', 'author', 'comment', 'level')
+        fields = ('id', 'author', 'comment', 'comments', 'level')
+
+
+class PostReadSerializer(serializers.ModelSerializer):
+    '''
+    Serializetion of Post model data to read
+    '''
+    author = UserSerializer()
+    category = CategorySerializer()
+    tags = TagSerializer(many=True)
+    comment_set = CommentReadSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Post
+        fields = '__all__'
 
 
 class PostSerializer(serializers.ModelSerializer):
     '''
     Serialization of Post model data
     '''
-    author = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all()
-    )
-    category = CategorySerializer()
-    tags = TagSerializer(many=True)
-    comment_set = CommentPostSerializer(read_only=True, many=True)
+    comment_set = CommentReadSerializer(read_only=True, many=True)
 
     class Meta:
         model = Post
@@ -90,6 +103,14 @@ class PostSerializer(serializers.ModelSerializer):
             'id', 'title', 'category', 'tags',
             'content', 'comment_set', 'author', 'pub_date'
         )
+
+    def validate(self, data):
+        if not data.get('tags'):
+            raise serializers.ValidationError({'tags': 'this field is required'})
+
+        if not data.get('category'):
+            raise serializers.ValidationError({'category': 'this field is required'})
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -101,4 +122,4 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
-        read_only_fields = ('comments', 'pub_date',)
+        read_only_fields = ('pub_date',)
