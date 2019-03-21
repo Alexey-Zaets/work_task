@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'is_superuser')
+        fields = ('id', 'username')
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
@@ -103,14 +103,6 @@ class PostSerializer(serializers.ModelSerializer):
             'id', 'title', 'category', 'tags',
             'content', 'comment_set', 'author', 'pub_date'
         )
-
-    def validate(self, data):
-        if not data.get('tags'):
-            raise serializers.ValidationError({'tags': 'this field is required'})
-
-        if not data.get('category'):
-            raise serializers.ValidationError({'category': 'this field is required'})
-        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):

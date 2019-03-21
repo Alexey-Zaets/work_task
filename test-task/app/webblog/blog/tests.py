@@ -369,13 +369,8 @@ class CommentTest(CustomAPITestCase):
 
     def test_update_comment(self):
         self.login_admin_and_set_credentials()
-        author = User.objects.get(username=ADMIN_NAME)
-        post = Post.objects.get(author=author)
-        comment = Comment.objects.get(author=author)
+        comment = Comment.objects.get(author__username=ADMIN_NAME)
         data = {
-            'post': post.id,
-            'author': author.id,
-            'level': 1,
             'comment': 'Second comment'
         }
         response = self.client.patch(
@@ -386,12 +381,8 @@ class CommentTest(CustomAPITestCase):
         self.assertTrue(Comment.objects.get(comment='Second comment'))
 
     def update_comment_without_permissions(self):
-        author = User.objects.get(username=ADMIN_NAME)
-        post = Post.objects.get(author=author)
-        comment = Comment.objects.get(author=author)
+        comment = Comment.objects.get(author__username=ADMIN_NAME)
         data = {
-            'post': post.id,
-            'author': author.id,
             'level': 1,
             'comment': 'Second comment'
         }
@@ -488,9 +479,6 @@ class PostTest(CustomAPITestCase):
         data = {
             'title': 'Updated post',
             'content': 'Changed content',
-            'author': post.author.id,
-            'tags': [tag.id for tag in post.tags.all()],
-            'category': post.category.id
         }
         response = self.client.patch(
             'http://0.0.0.0/api/v1/post/{}/'.format(post.id),
@@ -508,9 +496,6 @@ class PostTest(CustomAPITestCase):
         data = {
             'title': 'Updated post',
             'content': 'Changed content',
-            'author': post.author.id,
-            'tags': [tag.id for tag in post.tags.all()],
-            'category': post.category.id
         }
         response = self.client.patch(
             'http://0.0.0.0/api/v1/post/{}/'.format(post.id),

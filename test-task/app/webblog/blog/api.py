@@ -19,9 +19,9 @@ class CustomPermissionMixin:
         Method returns permission for a specific user
         '''
         if self.action in ['list', 'retrieve',]:
-            permission_classes = [AllowAny,]
+            permission_classes = (AllowAny,)
         else:
-            permission_classes = [IsAdminUser,]
+            permission_classes = (IsAdminUser,)
         return [permission() for permission in permission_classes]
 
 
@@ -115,8 +115,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         '''
         Set permissions for users
         '''
-        if self.action in ['list', 'retrieve', 'create']:
-            permission_classes = [AllowAny,]
+        if self.action in ['list', 'retrieve', 'create', 'update']:
+            permission_classes = (AllowAny,)
         else:
-            permission_classes = [IsAdminUser,]
+            permission_classes = (IsAdminUser,)
         return [permission() for permission in permission_classes]

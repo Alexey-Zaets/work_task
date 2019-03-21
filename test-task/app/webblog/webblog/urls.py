@@ -88,7 +88,7 @@ urlpatterns += format_suffix_patterns([
         'api/v1/post/<int:pk>/',
         PostViewSet.as_view({
             'get': 'retrieve',
-            'patch': 'update',
+            'patch': 'partial_update',
             'delete': 'destroy'
         }),
         name='post_detail',
@@ -102,7 +102,7 @@ urlpatterns += format_suffix_patterns([
         'api/v1/tag/<int:pk>/',
         TagViewSet.as_view({
             'get': 'retrieve',
-            'patch': 'update',
+            'patch': 'partial_update',
             'delete': 'destroy'
         }),
         name='tag_detail'
@@ -116,7 +116,7 @@ urlpatterns += format_suffix_patterns([
         'api/v1/category/<int:pk>/',
         CategoryViewSet.as_view({
             'get': 'retrieve',
-            'patch': 'update',
+            'patch': 'partial_update',
             'delete': 'destroy'
         }),
         name='category_detail'
@@ -130,7 +130,7 @@ urlpatterns += format_suffix_patterns([
         'api/v1/comment/<int:pk>/',
         CommentViewSet.as_view({
             'get': 'retrieve',
-            'patch': 'update',
+            'patch': 'partial_update',
             'delete': 'destroy'
         }),
         name='comment_detail'
