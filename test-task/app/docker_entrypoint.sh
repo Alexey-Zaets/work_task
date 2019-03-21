@@ -17,7 +17,7 @@ echo """
 Apply database migrations
 ======================================================================
 """
-python webblog/manage.py makemigrations && webblog/manage.py migrate 
+python webblog/manage.py makemigrations && webblog/manage.py migrate
 
 # Run Main service
 echo """

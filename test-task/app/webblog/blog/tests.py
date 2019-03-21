@@ -127,6 +127,13 @@ class AccountTest(CustomAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(User.objects.get(username=TEST_NAME).is_active)
 
+    def test_delete_user_without_permissions(self):
+        user_to_delete = User.objects.get(username=TEST_NAME)
+        response = self.client.delete(
+            'http://0.0.0.0/api/v1/user/{}/'.format(user_to_delete.id)
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertTrue(User.objects.get(username=TEST_NAME).is_active)
 
 
 class TagTest(CustomAPITestCase):
@@ -154,6 +161,12 @@ class TagTest(CustomAPITestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_create_not_unique_tag_without_permissions(self):
+        url = reverse('tag_list')
+        data = {'title': 'testtag'}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_create_unique_tag(self):
         self.login_admin_and_set_credentials()
         url = reverse('tag_list')
@@ -171,6 +184,14 @@ class TagTest(CustomAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(Tag.objects.get(title='new_title'))
 
+    def test_update_existing_tag_without_permissions(self):
+        tag = Tag.objects.get(title='testtag')
+        response = self.client.patch(
+            'http://0.0.0.0/api/v1/tag/{}/'.format(tag.id),
+            {'title': 'new_title'}
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_delete_existing_tag(self):
         self.login_admin_and_set_credentials()
         tag = Tag.objects.get(title='testtag')
@@ -184,6 +205,13 @@ class TagTest(CustomAPITestCase):
             ).status_code,
             status.HTTP_404_NOT_FOUND,
         )
+
+    def test_delete_existing_tag_without_permissions(self):
+        tag = Tag.objects.get(title='testtag')
+        response = self.client.delete(
+            'http://0.0.0.0/api/v1/tag/{}/'.format(tag.id)
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class CategoryTest(CustomAPITestCase):
@@ -230,6 +258,12 @@ class CategoryTest(CustomAPITestCase):
             Category.objects.get(title='Python').parent.title == 'News'
         )
 
+    def test_create_category_without_permissions(self):
+        url = reverse('category_list')
+        data = {'title': 'Python', 'parent': None}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_update_category_title(self):
         self.login_admin_and_set_credentials()
         category = Category.objects.get(title='News')
@@ -240,6 +274,15 @@ class CategoryTest(CustomAPITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(Category.objects.get(title='New_title'))
+
+    def test_update_category_without_permissions(self):
+        category = Category.objects.get(title='News')
+        category_parent = category.parent
+        response = self.client.patch(
+            'http://0.0.0.0/api/v1/category/{}/'.format(category.id),
+            {'title': 'New_title', 'parent': category_parent}
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_delete_existing_category(self):
         self.login_admin_and_set_credentials()
@@ -255,6 +298,14 @@ class CategoryTest(CustomAPITestCase):
             ).status_code,
             status.HTTP_404_NOT_FOUND,
         )
+
+    def test_delete_category_without_permissions(self):
+        category = Category.objects.get(title='News')
+        category_parent = category.parent
+        response = self.client.delete(
+            'http://0.0.0.0/api/v1/category/{}/'.format(category.id),
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class CommentTest(CustomAPITestCase):
@@ -334,6 +385,22 @@ class CommentTest(CustomAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(Comment.objects.get(comment='Second comment'))
 
+    def update_comment_without_permissions(self):
+        author = User.objects.get(username=ADMIN_NAME)
+        post = Post.objects.get(author=author)
+        comment = Comment.objects.get(author=author)
+        data = {
+            'post': post.id,
+            'author': author.id,
+            'level': 1,
+            'comment': 'Second comment'
+        }
+        response = self.client.patch(
+            'http://0.0.0.0/api/v1/comment/{}/'.format(comment.id),
+            data
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_delete_comment(self):
         self.login_admin_and_set_credentials()
         admin = User.objects.get(username=ADMIN_NAME)
@@ -342,6 +409,14 @@ class CommentTest(CustomAPITestCase):
             'http://0.0.0.0/api/v1/comment/{}/'.format(comment.id)
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_comment_without_permissions(self):
+        admin = User.objects.get(username=ADMIN_NAME)
+        comment = Comment.objects.get(author=admin.id)
+        response = self.client.delete(
+            'http://0.0.0.0/api/v1/comment/{}/'.format(comment.id)
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PostTest(CustomAPITestCase):
@@ -392,6 +467,21 @@ class PostTest(CustomAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(Post.objects.get(title='New post'))
 
+    def test_create_new_post_without_permissions(self):
+        url = reverse('post_list')
+        tag = Tag.objects.get(title='testtag')
+        category = Category.objects.get(title='News')
+        user = User.objects.get(username=ADMIN_NAME)
+        data = {
+            'title': 'New post',
+            'category': category.id,
+            'tags': [tag.id,],
+            'content': 'New test content',
+            'author': user.id
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_upadte_post(self):
         self.login_admin_and_set_credentials()
         post = Post.objects.get(title='First post')
@@ -413,6 +503,21 @@ class PostTest(CustomAPITestCase):
             'Changed content'
         )
 
+    def test_update_post_without_permissions(self):
+        post = Post.objects.get(title='First post')
+        data = {
+            'title': 'Updated post',
+            'content': 'Changed content',
+            'author': post.author.id,
+            'tags': [tag.id for tag in post.tags.all()],
+            'category': post.category.id
+        }
+        response = self.client.patch(
+            'http://0.0.0.0/api/v1/post/{}/'.format(post.id),
+            data
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_delete_post(self):
         self.login_admin_and_set_credentials()
         post = Post.objects.get(title='First post')
@@ -420,3 +525,10 @@ class PostTest(CustomAPITestCase):
             'http://0.0.0.0/api/v1/post/{}/'.format(post.id)
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_post_without_permissions(self):
+        post = Post.objects.get(title='First post')
+        response = self.client.delete(
+            'http://0.0.0.0/api/v1/post/{}/'.format(post.id)
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
