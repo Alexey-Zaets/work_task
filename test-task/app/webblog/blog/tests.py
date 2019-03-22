@@ -1,6 +1,6 @@
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from faker import Faker
 from blog.models import Tag, Category, Comment, Post
@@ -23,9 +23,9 @@ invalid_email = fake.text(max_nb_chars=10)
 
 class CustomAPITestCase(APITestCase):
 
-    def login_user_and_set_credentials(self, username, password):
+    def login_user_and_set_credentials(self, username, password_code):
         url = reverse('user_login')
-        data = {'username': username, 'password': password}
+        data = {'username': username, 'password': password_code}
         response = self.client.post(url, data)
         token = response.data['token']
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
