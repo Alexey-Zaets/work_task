@@ -7,7 +7,6 @@ services:
     app:
         restart: always
         build: ./app
-        tty: true
         volumes:
             - ./app:/usr/src/app:rw
         entrypoint: ./docker_entrypoint.sh

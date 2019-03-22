@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
 import mptt
@@ -7,7 +8,9 @@ class Category(models.Model):
     '''
     The class describes the category table in the database.
     '''
-    title = models.CharField('Category title', max_length=100, blank=False)
+    title = models.CharField(
+        'Category title', max_length=100, blank=False, unique=True
+    )
     parent = mptt.models.TreeForeignKey(
         'self', on_delete=models.CASCADE, null=True,
         blank=True, related_name='children'
@@ -34,7 +37,7 @@ class Tag(models.Model):
     '''
     The class describes the tag table in the database.
     '''
-    title = models.CharField('Tag title', max_length=60)
+    title = models.CharField('Tag title', max_length=60, unique=True)
 
     def __str__(self):
         '''
@@ -50,7 +53,7 @@ class Post(models.Model):
     '''
     title = models.CharField('Title', max_length=250, blank=False)
     category = models.ForeignKey(
-        Category, on_delete=models.DO_NOTHING, blank=False
+        Category, on_delete=models.SET_NULL, blank=False, null=True
     )
     tags = models.ManyToManyField(Tag, blank=False)
     content = models.TextField()
@@ -84,11 +87,19 @@ class Comment(models.Model):
     comment = models.TextField()
     pub_date = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def get_children(self):
+        '''
+        The method returns nested responses to the comment.
+        '''
+        return self.comments.all()
+    
+
     def get_absolute_url(self):
         '''
         The method returns the URL of the post to which the comment belongs.
         '''
-        return '/post/{}/'.format(self.post.id)
+        return reverse('post', args=(self.post.id,))
 
     def __str__(self):
         '''

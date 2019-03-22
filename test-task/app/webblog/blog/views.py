@@ -30,7 +30,7 @@ class ListPageView(ListView):
         context['url'] = self.request.path + '?'
         context['tags'] = Tag.objects.all()
         context['category'] = Category.objects.all()
-        context['ten'] = Comment.objects.all().order_by('-pub_date')[:10]
+        context['ten'] = Comment.objects.all().order_by('-pub_date')
         return context
 
 
@@ -58,7 +58,7 @@ class BlogPageView(LoginRequiredMixin, ListPageView):
         qs = super(BlogPageView, self).get_queryset()
         return self.model.objects.filter(author=self.request.user)
 
-    def get_context_data(self, *args, **kwargs):
+    def get_context_data(self, **kwargs):
         '''
         The method adds the data defined in the get_queryset method
         to the template.
@@ -88,7 +88,7 @@ class PostPageView(DetailView):
         )
         context['tags'] = Tag.objects.all()
         context['category'] = Category.objects.all()
-        context['ten'] = Comment.objects.all().order_by('-pub_date')[:10]
+        context['ten'] = Comment.objects.all().order_by('-pub_date')
         return context
 
 
@@ -99,11 +99,11 @@ class AddCommentView(CreateView):
     form_class = CommentForm
     http_method_names = ['post']
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, pk):
         '''
         The method processes the request to save the comment in the database.
         '''
-        post = get_object_or_404(Post, id=kwargs.get('pk'))
+        post = get_object_or_404(Post, id=pk)
         author = request.user
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -123,34 +123,33 @@ class ReplyCommentView(CreateView):
     template_name = 'comment_form.html'
     model = Comment
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, id):
         '''
         The method returns form to user for reply.
         '''
-        comment_id = kwargs.get('id')
-        comment = get_object_or_404(self.model, id=comment_id)
+        comment = get_object_or_404(self.model, id=id)
         return render(
             request, self.template_name, {
-                'comment_id': comment_id,
+                'comment_id': id,
                 'form': self.form_class,
                 'tags': Tag.objects.all(),
                 'category': Category.objects.all(),
             }
         )
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, id):
         '''
         The method processes the request to save the reply in the database.
         '''
-        comment_id = kwargs.get('id')
-        comment = get_object_or_404(self.model, id=comment_id)
+        comment = get_object_or_404(self.model, id=id)
         post = comment.post
         author = request.user
         form = self.form_class(request.POST)
         if comment.level < 2:
             if form.is_valid():
                 new_comment = form.save(commit=False)
-                new_comment.author, new_comment.post = author, post
+                new_comment.author = author if isinstance(author, User) else None
+                new_comment.post = post
                 new_comment.level = comment.level + 1
                 new_comment.save()
                 comment.comments.add(new_comment)
@@ -172,7 +171,7 @@ class AddPostView(LoginRequiredMixin, CreateView):
     template_name = 'add_new_post.html'
     login_url = '/login/'
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         '''
         The method returns form to user for create post.
         '''
@@ -181,11 +180,11 @@ class AddPostView(LoginRequiredMixin, CreateView):
                 'form': self.form_class(),
                 'tags': Tag.objects.all(),
                 'category': Category.objects.all(),
-                'ten': Comment.objects.all().order_by('-pub_date')[:10]
+                'ten': Comment.objects.all().order_by('-pub_date')
             }
         )
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         '''
         The method processes the request to save the post in the database.
         '''
@@ -200,7 +199,7 @@ class AddPostView(LoginRequiredMixin, CreateView):
                     'form': form,
                     'tags': Tag.objects.all(),
                     'category': Category.objects.all(),
-                    'ten': Comment.objects.all().order_by('-pub_date')[:10]
+                    'ten': Comment.objects.all().order_by('-pub_date')
                 }
             )
 
@@ -215,11 +214,10 @@ class UpdatePostView(LoginRequiredMixin, UpdateView):
     template_name = 'update_post.html'
     logint_url = '/login/'
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, pk):
         '''
         The method returns form to user for update post.
         '''
-        pk = kwargs.get('pk')
         post = get_object_or_404(self.model, id=pk)
         form = self.form_class(instance=post)
         return render(
@@ -228,16 +226,15 @@ class UpdatePostView(LoginRequiredMixin, UpdateView):
                 'pk': pk,
                 'tags': Tag.objects.all(),
                 'category': Category.objects.all(),
-                'ten': Comment.objects.all().order_by('-pub_date')[:10]
+                'ten': Comment.objects.all().order_by('-pub_date')
             }
         )
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, pk):
         '''
         The method processes the request to save the updated post
         in the database.
         '''
-        pk = kwargs.get('pk')
         post = self.model.objects.get(id=pk)
         form = self.form_class(request.POST, instance=post)
         if form.is_valid():
@@ -310,14 +307,14 @@ class LoginView(View):
     form_class = AuthenticationForm
     template_name = 'login.html'
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         '''
         The method returns form to user for authenticate.
         '''
         form = self.form_class()
         return render(request, self.template_name, {'form': form})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         '''
         The method checks the data specified by the user and
         authenticates the user or not.
@@ -343,14 +340,14 @@ class RegisterView(View):
     form_class = RegisterUserForm
     template_name = 'register.html'
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         '''
         The method returns form to user for registrate.
         '''
         form = self.form_class()
         return render(request, self.template_name, {'form': form})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         '''
         The method checks the data specified by the user and
         registers the user.

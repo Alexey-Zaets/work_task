@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load commenttree %}
 
 {% block content %}
     <div class="col-md-9">
         <h1 class="text-center">{{ post.title }}</h1>
         {% for tag in post_tags %}
-            <a href="/tag/{{ tag.title }}/" class="badge badge-info">{{ tag.title }}</a>
+            <a href="{% url 'tag' tag.title %}" class="badge badge-info">{{ tag.title }}</a>
         {% endfor %}
         <p class="text-justify text-monospace mt-3 border-bottom">{{ post.content }}</p>
         {% if user.is_authenticated %}
-            <a href="/post/{{ post.pk }}/edit/" class="btn btn-primary btn-lg btn-block">Update post</a>
+            <a href="{% url 'post_edit' post.pk %}" class="btn btn-primary btn-lg btn-block">Update post</a>
         {% endif %}
-        {% load crispy_forms_tags %}
         <h3 class="mt-3">Comments</h3>
-        {% load commenttree %}
         {{ comments|commenttree }}
         <h3 class="mt-3">Add new comment</h3>
-        <form method='post' action='/post/{{ post.pk }}/addcomment/'>{% csrf_token %}
+        <form method='post' action="{% url 'add_comment' post.pk %}">{% csrf_token %}
             {{ form|crispy }}
             <button class="btn btn-lg btn-primary btn-block mb-5" type="submit">Add</button>
         </form>
