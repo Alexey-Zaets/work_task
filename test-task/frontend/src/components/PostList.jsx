@@ -1,14 +1,15 @@
 import React, {Component} from 'react'
 
 
-class Navbarbrand extends Component {
+class PostList extends Component {
+
     render() {
         return (
             <div>
-                <a className="navbar-brand" href="/">Main</a>
+                <h3>PostList</h3>
             </div>
         )
     }
 }
 
-export default Navbarbrand
+export default PostList
