@@ -2,13 +2,10 @@ import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
 
 
-class PostList extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            postTitle: {}
-        }
+class PostList extends Component {
+    state = {
+        postsList: []
     }
 
     componentDidMount() {
@@ -22,16 +19,18 @@ class PostList extends Component {
             mode: 'cors'
         }
         fetch('http://0.0.0.0/api/v1/post', req)
-            .then(function(response) {
-                return response.json()
-            })
-            .then(data => data.results.map(post => post.title))
-            .then(postTitle => this.setState({postTitle}))
+            .then(response => response.json())
+            .then(data => this.setState({postsList: data.results}))
     }
 
     render() {
         return (
             <div>
+                {this.state.postsList.map((post) => {
+                    return (
+                        <h3 key={post.id}>{post.title}</h3>
+                    )
+                })}
             </div>
         )
     }

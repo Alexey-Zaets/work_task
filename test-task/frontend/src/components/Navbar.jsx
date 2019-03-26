@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import Navbarbrand from './Navbarbrand'
 import Navbarcollapse from './Navbarcollapse'
+import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
 
 
 class Navbar extends Component {
@@ -8,7 +8,9 @@ class Navbar extends Component {
         return (
             <div>
                 <nav className="navbar navbar-expand-md navbar-dark bg-dark">
-                    <Navbarbrand/>
+                    <Router>
+                        <Link className="navbar-brand" to="/">Main</Link>
+                    </Router>
                     <Navbarcollapse/>
                 </nav>
             </div>
