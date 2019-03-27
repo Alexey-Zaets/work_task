@@ -44,7 +44,6 @@ class Navbarcollapse extends Component {
                             <Link className="nav-link" to="/api/v1/user/register">Sign up</Link>
                         </li>
                     </ul>
-                    <button className="btn btn-primary" onClick={this.handleOnClickSignOut}>Sign out</button>
                 </div>
             )
         }
