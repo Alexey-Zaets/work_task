@@ -51,10 +51,16 @@ class CategorySerializer(serializers.ModelSerializer):
         allow_null=True,
         required=False,
     )
+    children = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),
+        required=False,
+        many=True
+    )
 
     class Meta:
         model = Category
-        fields = ('id', 'title', 'parent')
+        fields = ('id', 'title', 'parent', 'children')
+        read_only_fields = ('children',)
 
 
 class TagSerializer(serializers.ModelSerializer):

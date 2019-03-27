@@ -1,34 +1,52 @@
 import React, {Component} from 'react'
-import Button from './Navbarbutton'
+import {Link} from 'react-router-dom'
+import Cookies from 'universal-cookie'
+
 
 class Navbarcollapse extends Component {
-
-    render() {
-        return (
-            <div className="collapse navbar-collapse">
-                <ul className="navbar-nav">
-                    <li className="nav-item active">
-                        <a className="nav-link">Blog</a>
-                    </li>
-                    <li className="nav-item active">
-                        <a className="nav-link">+ Add new post</a>
-                    </li>
-                </ul>
-                <ul className="navbar-nav ml-auto">
-                    <li className="nav-item active">
-                        <a className="nav-link" onClick={this.handleClickSignin} style={{cursor: "pointer"}}>Sign in</a>
-                    </li>
-                    <li className="nav-item active">
-                        <a className="nav-link">Sign up</a>
-                    </li>
-                </ul>
-                <Button/>
-            </div>
-        )
+    state = {
+        resetToken: true
     }
 
-    handleClickSignin = () => {
-        console.log('---', 'clicked')
+    handleOnClickSignOut = (e) => {
+        e.preventDefault();
+        let cookies = new Cookies()
+        cookies.remove('token')
+        this.setState({resetToken: !this.state.resetToken})
+    }
+
+    render() {
+        const cookies = new Cookies()
+        const token = cookies.get('token')
+
+        if (token) {
+            return (
+                <div className="collapse navbar-collapse">
+                    <ul className="navbar-nav">
+                        <li className="nav-item active">
+                            <Link className="nav-link" to="/api/v1/post">Blog</Link>
+                        </li>
+                        <li className="nav-item active">
+                            <Link className="nav-link" to="/api/v1/post">+ Add new post</Link>
+                        </li>
+                    </ul>
+                    <button className="btn btn-primary ml-auto" onClick={this.handleOnClickSignOut}>Sign out</button>
+                </div>
+            )
+        } else {
+            return (
+                <div className="collapse navbar-collapse">
+                    <ul className="navbar-nav ml-auto">
+                        <li className="nav-item active">
+                            <Link className="nav-link" to="/api/v1/user/login">Sign in</Link>
+                        </li>
+                        <li className="nav-item active">
+                            <Link className="nav-link" to="/api/v1/user/register">Sign up</Link>
+                        </li>
+                    </ul>
+                </div>
+            )
+        }
     }
 }
 

@@ -1,19 +1,13 @@
-import React, {Component} from 'react'
+import React, {Fragment} from 'react'
 import Navbar from './Navbar'
-import Container from './Container'
 import 'bootstrap/dist/css/bootstrap.css'
 
 
-class App extends Component {
-
-    render() {
-        return (
-            <div>
-                <Navbar/>
-                <Container/>
-            </div>
-        )
-    }
-}
+const App = ({children}) => (
+    <Fragment>
+        <Navbar/>
+        {children}
+    </Fragment>
+)
 
 export default App

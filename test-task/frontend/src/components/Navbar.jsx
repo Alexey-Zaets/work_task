@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import Navbarbrand from './Navbarbrand'
 import Navbarcollapse from './Navbarcollapse'
+import {Link} from 'react-router-dom'
 
 
 class Navbar extends Component {
@@ -8,7 +8,7 @@ class Navbar extends Component {
         return (
             <div>
                 <nav className="navbar navbar-expand-md navbar-dark bg-dark">
-                    <Navbarbrand/>
+                    <Link className="navbar-brand" to="/">Main</Link>
                     <Navbarcollapse/>
                 </nav>
             </div>
