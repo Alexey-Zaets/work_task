@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 
 
 class TagList extends Component {
@@ -28,9 +28,7 @@ class TagList extends Component {
                 <h3>Tags</h3>
                 {this.state.tagsList.map((tag) => {
                     return (
-                        <Router key={tag.id}>
-                            <Link to="" className="badge badge-info" key={tag.id}>{tag.title}</Link>
-                        </Router>
+                        <Link to="" className="badge badge-info" key={tag.id}>{tag.title}</Link>
                     )
                 })}
             </div>

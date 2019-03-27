@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import './style.css'
-import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 
 
 class CategoryList extends Component {
@@ -29,21 +29,16 @@ class CategoryList extends Component {
                 <h3>Categories</h3>
                 <ul className="border-bottom">
                     {this.state.categoriesList.map((category) => {
-                        console.log('lll', category)
-                        if (category.parent != []) {
+                        if (!category.children.length) {
                             return (
                                 <li className="category-list__li" key={category.id}>
-                                    <Router key={category.id}>
-                                        <Link to="" key={category.id}>{category.title}</Link>
-                                    </Router>
+                                    <Link to="" key={category.id}>{category.title}</Link>
                                 </li>
                             )
                         } else {
                             return (
                                 <ul className="children" key={category.id}>
-                                    <Router key={category.id}>
-                                        <Link to="" key={category.id}>{category.title}</Link>
-                                    </Router>
+                                    <Link to="" key={category.id}>{category.title}</Link>
                                 </ul>
                             )
                         }
