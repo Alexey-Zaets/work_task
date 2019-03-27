@@ -1,8 +1,15 @@
 import React, {Component} from 'react'
-import {Link} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
+import Cookies from 'universal-cookie'
 
 
 class Navbarcollapse extends Component {
+
+    handleOnClickSignOut = (e) => {
+        e.preventDefault();
+        let cookies = new Cookies()
+        cookies.remove('token')
+    }
 
     render() {
         return (
@@ -23,7 +30,7 @@ class Navbarcollapse extends Component {
                         <Link className="nav-link" to="/api/v1/user/register">Sign up</Link>
                     </li>
                 </ul>
-                <Link className="btn btn-primary" to="">Sign out</Link>
+                <button className="btn btn-primary" onClick={this.handleOnClickSignOut}>Sign out</button>
             </div>
         )
     }
