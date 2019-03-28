@@ -1,7 +1,7 @@
 import React from 'react'
 import {render} from 'react-dom'
 import App from './components/App'
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import {BrowserRouter, Switch, Route} from 'react-router-dom'
 import Home from './components/Home'
 import Post from './components/Post'
 import LoginForm from './components/LoginForm'
@@ -16,7 +16,7 @@ export let store = createStore(rootReducer)
 
 render((
     <Provider store={store}>
-        <Router>
+        <BrowserRouter>
             <App>
                 <Switch>
                     <Route exact path='/' component={Home}/>
@@ -25,7 +25,7 @@ render((
                     <Route path='/api/v1/user/register' component={RegisterForm}/>
                 </Switch>
             </App>
-        </Router>
+        </BrowserRouter>
     </Provider>
     ), document.getElementById('root')
 )
