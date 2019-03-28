@@ -1,25 +1,37 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
 import Cookies from 'universal-cookie'
+import {store} from '../index'
 
 
 class Navbarcollapse extends Component {
-    state = {
-        resetToken: true
+
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            haveToken: false
+        }
+
+        store.subscribe(() => {
+            if (this.state !== store.getState()) {
+                this.setState(store.getState())
+            }
+        })
     }
 
     handleOnClickSignOut = (e) => {
         e.preventDefault();
         let cookies = new Cookies()
         cookies.remove('token')
-        this.setState({resetToken: !this.state.resetToken})
+        this.setState({haveToken: false})
     }
 
     render() {
         const cookies = new Cookies()
         const token = cookies.get('token')
 
-        if (token) {
+        if (this.state.haveToken || token) {
             return (
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav">

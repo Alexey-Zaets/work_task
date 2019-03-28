@@ -1,15 +1,14 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import CategoryList from './CategoryList'
-import TagList from './TagList'
-import LastTenCommentList from './LastTenCommentList'
-import Pagination from './Pagination'
 import {Link} from 'react-router-dom'
 
 
 class Home extends Component {
+
     state = {
-        postsList: []
+        postsList: [],
+        post: {},
+        tags: []
     }
 
     componentDidMount() {
@@ -27,26 +26,20 @@ class Home extends Component {
             .then(data => this.setState({postsList: data.results}))
     }
 
+    handleOnClickPostLink = (e) => {
+        e.preventDefault();
+        console.log('clicked')
+    }
+
     render() {
+
         return (
-            <div className="flex-shrink-0">
-                <div className="container">
-                    <div className="row mt-5">
-                        <div>
-                            {this.state.postsList.map((post) => {
-                                return (
-                                    <h3 key={post.id}><Link to={`/api/v1/post/${post.id}`}>{post.title}</Link></h3>
-                                )
-                            })}
-                        </div>
-                        <div className="col-md-3 ml-auto">
-                            <CategoryList/>
-                            <TagList/>
-                            <LastTenCommentList/>
-                        </div>
-                    </div>
-                </div>
-                <Pagination/>
+            <div>
+                {this.state.postsList.map((post) => {
+                    return (
+                        <h3 key={post.id} onClick={this.handleOnClickPostLink}><Link to={`/api/v1/post/${post.id}`}>{post.title}</Link></h3>
+                    )
+                })}
             </div>
         )
     }
