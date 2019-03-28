@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import Cookies from 'universal-cookie'
 import {Redirect} from 'react-router-dom'
+import {store} from '../index'
 
 
 class LoginForm extends Component {
@@ -47,6 +48,8 @@ class LoginForm extends Component {
                 cookies.set('token', 'JWT ' + data.token, {path: '/'})
                 this.setState({redirectToReferrer: true})
             })
+        
+        store.dispatch({type: "LOGIN"})
     }
 
     render() {

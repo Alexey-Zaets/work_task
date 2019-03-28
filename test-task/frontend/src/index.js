@@ -7,12 +7,16 @@ import Post from './components/Post'
 import LoginForm from './components/LoginForm'
 import RegisterForm from './components/RegisterForm'
 import {Provider} from 'react-redux'
-import store from './components/store'
+import {createStore} from 'redux'
+import rootReducer from './store/reducers'
+
+
+export let store = createStore(rootReducer)
 
 
 render((
-    <Router>
-        <Provider store={store}>
+    <Provider store={store}>
+        <Router>
             <App>
                 <Switch>
                     <Route exact path='/' component={Home}/>
@@ -21,7 +25,7 @@ render((
                     <Route path='/api/v1/user/register' component={RegisterForm}/>
                 </Switch>
             </App>
-        </Provider>
-    </Router>
+        </Router>
+    </Provider>
     ), document.getElementById('root')
 )
