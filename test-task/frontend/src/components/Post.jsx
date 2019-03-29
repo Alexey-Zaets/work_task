@@ -39,7 +39,9 @@ class Post extends Component {
                 <h1 className="text-center">{post.title}</h1>
                 {this.state.tags.map((tag) => {
                     return (
-                        <Link to='' className="badge badge-info" key={tag.id}>{tag.title}</Link>
+                        <Link to={`/tag/${tag.id}/posts`} className="badge badge-info" key={tag.id}>
+                            {tag.title}
+                        </Link>
                     )
                 })}
                 <p className="text-justify text-monospace mt-3 border-bottom">{post.content}</p>

@@ -28,7 +28,7 @@ class TagList extends Component {
                 <h3>Tags</h3>
                 {this.state.tagsList.map((tag) => {
                     return (
-                        <Link to="" className="badge badge-info" key={tag.id}>{tag.title}</Link>
+                        <Link to={`/tag/${tag.id}/posts/`} className="badge badge-info" key={tag.id}>{tag.title}</Link>
                     )
                 })}
             </div>
