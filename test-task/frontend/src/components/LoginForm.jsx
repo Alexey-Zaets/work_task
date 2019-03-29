@@ -44,12 +44,13 @@ class LoginForm extends Component {
             .then(response => {
                 if (response.status === 200) {
                     store.dispatch({type: "LOGIN"})
-                    return response.json()
+                    response.json().then(data => {
+                        cookies.set('token', 'JWT ' + data.token, {path: '/'})
+                        this.setState({redirectToReferrer: true})
+                    })
+                } else {
+                    alert('Проверьте правильность заполнения полей')
                 }
-            })
-            .then(data => {
-                cookies.set('token', 'JWT ' + data.token, {path: '/'})
-                this.setState({redirectToReferrer: true})
             })
     }
 
