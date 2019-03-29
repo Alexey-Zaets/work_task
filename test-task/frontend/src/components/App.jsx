@@ -1,8 +1,6 @@
 import React, {Fragment} from 'react'
 import Navbar from './Navbar'
 import 'bootstrap/dist/css/bootstrap.css'
-import Pagination from './Pagination'
-import Sidebar from './Sidebar'
 
 
 const App = ({children}) => (
@@ -12,11 +10,9 @@ const App = ({children}) => (
             <div className="container">
                 <div className="row mt-5">
                     {children}
-                    <Sidebar/>
                 </div>
             </div>
         </div>
-        <Pagination/>
     </Fragment>
 )
 

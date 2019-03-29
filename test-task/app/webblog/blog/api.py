@@ -82,7 +82,7 @@ class LastTenCommentsViewSet(viewsets.ModelViewSet):
     '''
     Processes requests for data retrieval by last 10 comments
     '''
-    queryset = Comment.objects.all()[:10]
+    queryset = Comment.objects.all().order_by('-pub_date')
     serializer_class = CommentReadSerializer
     permission_classes = (AllowAny,)
 

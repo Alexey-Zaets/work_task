@@ -49,7 +49,7 @@ class RegisteForm extends Component {
                     this.setState({redirectToReferrer: true})
                 } else {
                     response.json().then((json) =>{
-                        console.log(json)
+                        alert('Все поля должны быть заполнены')
                     })
                 }
             })
@@ -72,20 +72,20 @@ class RegisteForm extends Component {
                             <div className='row justify-content-center'>
                                 <div className='col-6'>
                                     <div className="form-group">
-                                        <label className="col-form-label">
-                                            Имя пользователя*
+                                        <label className="col-form-label requiredField">
+                                            Имя пользователя
                                         </label>
                                         <input className="textinput textInput form-control" type="text" name="username" value={username} onChange={this.handleUsernameChange}/>
                                     </div>
                                     <div className="form-group">
-                                        <label className="col-form-label">
-                                            Email*
+                                        <label className="col-form-label requiredField">
+                                            Email
                                         </label>
                                         <input className="emailinput form-control" type="text" name="username" value={email} onChange={this.handleEmailChange}/>
                                     </div>
                                     <div className="form-group">
-                                        <label className="col-form-label">
-                                            Пароль*
+                                        <label className="col-form-label requiredField">
+                                            Пароль
                                         </label>
                                         <input className="textinput textInput form-control" type="password" name="password" value={password} onChange={this.handlePasswordChange}/>
                                     </div>
