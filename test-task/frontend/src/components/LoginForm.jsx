@@ -42,14 +42,15 @@ class LoginForm extends Component {
 
         fetch('http://0.0.0.0/api/v1/user/login/', req)
             .then(response => {
-                return response.json()
+                if (response.status === 200) {
+                    store.dispatch({type: "LOGIN"})
+                    return response.json()
+                }
             })
             .then(data => {
                 cookies.set('token', 'JWT ' + data.token, {path: '/'})
                 this.setState({redirectToReferrer: true})
             })
-        
-        store.dispatch({type: "LOGIN"})
     }
 
     render() {

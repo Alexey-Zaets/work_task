@@ -31,6 +31,7 @@ class Navbarcollapse extends Component {
     handleOnClickSignOut = (e) => {
         e.preventDefault();
         this.cookies.remove('token')
+        store.dispatch({type: "LOGOUT"})
     }
 
     render() {
