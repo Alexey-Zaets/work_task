@@ -4,7 +4,6 @@ import {Link} from 'react-router-dom'
 
 
 class Home extends Component {
-
     state = {
         postsList: [],
         post: {},
@@ -26,18 +25,13 @@ class Home extends Component {
             .then(data => this.setState({postsList: data.results}))
     }
 
-    handleOnClickPostLink = (e) => {
-        e.preventDefault();
-        console.log('clicked')
-    }
-
     render() {
 
         return (
             <div>
                 {this.state.postsList.map((post) => {
                     return (
-                        <h3 key={post.id} onClick={this.handleOnClickPostLink}><Link to={`/api/v1/post/${post.id}`}>{post.title}</Link></h3>
+                        <h3 key={post.id}><Link to={`/api/v1/post/${post.id}`}>{post.title}</Link></h3>
                     )
                 })}
             </div>

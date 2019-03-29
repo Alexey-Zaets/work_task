@@ -33,6 +33,7 @@ class Post extends Component {
 
     render() {
         const post = this.state.post
+
         return (
             <div className="col-md-9">
                 <h1 className="text-center">{post.title}</h1>

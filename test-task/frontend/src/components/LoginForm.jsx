@@ -69,14 +69,14 @@ class LoginForm extends Component {
                             <div className='row justify-content-center'>
                                 <div className='col-6'>
                                     <div className="form-group">
-                                        <label className="col-form-label">
-                                            Имя пользователя*
+                                        <label className="col-form-label requiredField">
+                                            Имя пользователя
                                         </label>
                                         <input className="textinput textInput form-control" type="text" name="username" value={username} onChange={this.handleUsernameChange}/>
                                     </div>
                                     <div className="form-group">
-                                        <label className="col-form-label">
-                                            Пароль*
+                                        <label className="col-form-label requiredField">
+                                            Пароль
                                         </label>
                                         <input className="textinput textInput form-control" type="password" name="password" value={password} onChange={this.handlePasswordChange}/>
                                     </div>
