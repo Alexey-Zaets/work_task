@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import Cookies from 'universal-cookie'
 import {Redirect} from 'react-router-dom'
+import {store} from '../index'
 
 
 class LoginForm extends Component {
@@ -41,11 +42,15 @@ class LoginForm extends Component {
 
         fetch('http://0.0.0.0/api/v1/user/login/', req)
             .then(response => {
-                return response.json()
-            })
-            .then(data => {
-                cookies.set('token', 'JWT ' + data.token, {path: '/'})
-                this.setState({redirectToReferrer: true})
+                if (response.status === 200) {
+                    store.dispatch({type: "LOGIN"})
+                    response.json().then(data => {
+                        cookies.set('token', 'JWT ' + data.token, {path: '/'})
+                        this.setState({redirectToReferrer: true})
+                    })
+                } else {
+                    alert('Проверьте правильность заполнения полей')
+                }
             })
     }
 
@@ -66,14 +71,14 @@ class LoginForm extends Component {
                             <div className='row justify-content-center'>
                                 <div className='col-6'>
                                     <div className="form-group">
-                                        <label className="col-form-label">
-                                            Имя пользователя*
+                                        <label className="col-form-label requiredField">
+                                            Имя пользователя
                                         </label>
                                         <input className="textinput textInput form-control" type="text" name="username" value={username} onChange={this.handleUsernameChange}/>
                                     </div>
                                     <div className="form-group">
-                                        <label className="col-form-label">
-                                            Пароль*
+                                        <label className="col-form-label requiredField">
+                                            Пароль
                                         </label>
                                         <input className="textinput textInput form-control" type="password" name="password" value={password} onChange={this.handlePasswordChange}/>
                                     </div>

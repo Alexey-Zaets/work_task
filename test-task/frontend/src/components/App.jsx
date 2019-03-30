@@ -6,7 +6,13 @@ import 'bootstrap/dist/css/bootstrap.css'
 const App = ({children}) => (
     <Fragment>
         <Navbar/>
-        {children}
+        <div className="flex-shrink-0">
+            <div className="container">
+                <div className="row mt-5">
+                    {children}
+                </div>
+            </div>
+        </div>
     </Fragment>
 )
 

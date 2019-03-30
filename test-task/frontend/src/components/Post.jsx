@@ -1,9 +1,5 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import CategoryList from './CategoryList'
-import TagList from './TagList'
-import LastTenCommentList from './LastTenCommentList'
-import Pagination from './Pagination'
 import {Link} from 'react-router-dom'
 
 
@@ -37,28 +33,20 @@ class Post extends Component {
 
     render() {
         const post = this.state.post
+
         return (
-            <div className="flex-shrink-0">
-                <div className="container">
-                    <div className="row mt-5">
-                        <div className="col-md-9">
-                            <h1 className="text-center">{post.title}</h1>
-                            {this.state.tags.map((tag) => {
-                                return (
-                                    <Link to='' className="badge badge-info" key={tag.id}>{tag.title}</Link>
-                                )
-                            })}
-                            <p className="text-justify text-monospace mt-3 border-bottom">{post.content}</p>
-                        </div>
-                        <div className="col-md-3 ml-auto">
-                            <CategoryList/>
-                            <TagList/>
-                            <LastTenCommentList/>
-                        </div>
-                    </div>
-                </div>
-                <Pagination/>
+            <div className="col-md-9">
+                <h1 className="text-center">{post.title}</h1>
+                {this.state.tags.map((tag) => {
+                    return (
+                        <Link to={`/tag/${tag.id}/posts`} className="badge badge-info" key={tag.id}>
+                            {tag.title}
+                        </Link>
+                    )
+                })}
+                <p className="text-justify text-monospace mt-3 border-bottom">{post.content}</p>
             </div>
+
         )
     }
 

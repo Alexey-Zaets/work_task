@@ -1,25 +1,43 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
 import Cookies from 'universal-cookie'
+import {store} from '../index'
 
 
 class Navbarcollapse extends Component {
-    state = {
-        resetToken: true
+
+    constructor(props) {
+        super(props)
+
+        this.cookies = new Cookies()
+
+        if (this.cookies.get('token')) {
+            this.authenticated = true
+        } else {
+            this.authenticated = false
+        }
+
+        this.state = {
+            auth: this.authenticated,
+        }
+
+        store.subscribe(() => {
+            if (this.state !== store.getState()) {
+                this.setState(store.getState())
+            }
+        })
     }
 
     handleOnClickSignOut = (e) => {
         e.preventDefault();
-        let cookies = new Cookies()
-        cookies.remove('token')
-        this.setState({resetToken: !this.state.resetToken})
+        this.cookies.remove('token')
+        store.dispatch({type: "LOGOUT"})
     }
 
     render() {
-        const cookies = new Cookies()
-        const token = cookies.get('token')
+        const token = this.cookies.get('token')
 
-        if (token) {
+        if (this.state.auth || token) {
             return (
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav">
@@ -27,7 +45,7 @@ class Navbarcollapse extends Component {
                             <Link className="nav-link" to="/api/v1/post">Blog</Link>
                         </li>
                         <li className="nav-item active">
-                            <Link className="nav-link" to="/api/v1/post">+ Add new post</Link>
+                            <Link className="nav-link" to="/add">+ Add new post</Link>
                         </li>
                     </ul>
                     <button className="btn btn-primary ml-auto" onClick={this.handleOnClickSignOut}>Sign out</button>

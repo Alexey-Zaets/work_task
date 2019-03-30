@@ -45,13 +45,13 @@ class CategoryList extends Component {
                         if (!category.children.length) {
                             return (
                                 <li className="category-list__li" key={category.id}>
-                                    <Link to="" key={category.id}>{category.title}</Link>
+                                    <Link to={`/category/${category.id}/posts`} key={category.id}>{category.title}</Link>
                                 </li>
                             )
                         } else {
                             return (
                                 <ul className="children" key={category.id}>
-                                    <Link to="" key={category.id}>{category.title}</Link>
+                                    <Link to={`/category/${category.id}/posts`} key={category.id}>{category.title}</Link>
                                 </ul>
                             )
                         }
