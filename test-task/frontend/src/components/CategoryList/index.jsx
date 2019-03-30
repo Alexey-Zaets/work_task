@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom'
 
 class CategoryList extends Component {
     state = {
+        parents: null,
         categoriesList: []
     }
 
@@ -20,7 +21,19 @@ class CategoryList extends Component {
         }
         fetch('http://0.0.0.0/api/v1/category', req)
             .then(response => response.json())
-            .then(data => this.setState({categoriesList: data.results}))
+            .then(data => {
+                const parents = data.results.filter(cat => !cat.parent)
+                const categoriesList = data.results.filter(cat => cat.parent)
+
+                this.setState({
+                    categoriesList,
+                    parents
+                })
+
+                console.log('parents', parents, 'sran', categoriesList)
+            })
+
+        
     }
 
     render() {
