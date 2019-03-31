@@ -48,7 +48,7 @@ class RegisteForm extends Component {
                 if (response.status === 201) {
                     this.setState({redirectToReferrer: true})
                 } else {
-                    response.json().then((json) =>{
+                    response.json().then((data) =>{
                         alert('Все поля должны быть заполнены')
                     })
                 }

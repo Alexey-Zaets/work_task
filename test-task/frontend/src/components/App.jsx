@@ -3,17 +3,21 @@ import Navbar from './Navbar'
 import 'bootstrap/dist/css/bootstrap.css'
 
 
-const App = ({children}) => (
-    <Fragment>
-        <Navbar/>
-        <div className="flex-shrink-0">
-            <div className="container">
-                <div className="row mt-5">
-                    {children}
+class App extends React.Component {
+    render() {
+        return (
+            <Fragment>
+                <Navbar/>
+                <div className="flex-shrink-0">
+                    <div className="container">
+                        <div className="row mt-5">
+                            {this.props.children}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </Fragment>
-)
+            </Fragment>
+        )
+    }
+}
 
 export default App

@@ -57,11 +57,12 @@ class LastTenCommentList extends Component {
     render() {
         const currentIndex = this.state.currentIndex
         const comment = !this.state.commentsList.length ? '': this.state.commentsList[currentIndex]
+        const author = comment.author ? comment.author.username: 'Anonymous'
 
         return (
             <div className="card mt-3" style={{width: "18rem"}}  onClick={this.handleOnCommentClick}>
                 <div className="card-body">
-                    <h5 className="card-title">{comment.author ? comment.author.username: 'Anonymous'}</h5>
+                    <h5 className="card-title">{author}</h5>
                     <p className="card-text">{comment.comment}</p>
                 </div>
             </div>

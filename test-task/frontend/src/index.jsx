@@ -13,7 +13,10 @@ import Sidebar from './components/Sidebar'
 import CreatePostForm from './components/CreatePostForm'
 
 
-export let store = createStore(rootReducer)
+export let store = createStore(
+    rootReducer,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
 
 render((
     <Provider store={store}>
@@ -28,12 +31,12 @@ render((
                         <Route component={CreatePostForm}/>
                         <Route component={Sidebar}/>
                     </Route>
-                    <Route path='/api/v1/post/:id'>
+                    <Route path='/post/:id'>
                         <Route component={Post}/>
                         <Route component={Sidebar}/>
                     </Route>
-                    <Route path='/api/v1/user/login' component={LoginForm}/>
-                    <Route path='/api/v1/user/register' component={RegisterForm}/>
+                    <Route path='/login' component={LoginForm}/>
+                    <Route path='/register' component={RegisterForm}/>
                 </Switch>
             </App>
         </BrowserRouter>

@@ -6,8 +6,6 @@ import {Link} from 'react-router-dom'
 class Home extends Component {
     state = {
         postsList: [],
-        post: {},
-        tags: []
     }
 
     componentDidMount() {
@@ -31,7 +29,7 @@ class Home extends Component {
             <div>
                 {this.state.postsList.map((post) => {
                     return (
-                        <h3 key={post.id}><Link to={`/api/v1/post/${post.id}`}>{post.title}</Link></h3>
+                        <h3 key={post.id}><Link to={`/post/${post.id}`}>{post.title}</Link></h3>
                     )
                 })}
             </div>
