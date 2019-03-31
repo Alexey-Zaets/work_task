@@ -9,7 +9,7 @@ class CategoryList extends Component {
         categoriesList: []
     }
 
-    componentDidMount() {
+    componentWillMount() {
         const headers = new Headers({
             "Content-Type": "application/json"
         })

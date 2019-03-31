@@ -7,7 +7,7 @@ class TagList extends Component {
         tagsList: []
     }
 
-    componentDidMount() {
+    componentWillMount() {
         const headers = new Headers({
             "Content-Type": "application/json"
         })

@@ -8,7 +8,7 @@ class Home extends Component {
         postsList: [],
     }
 
-    componentDidMount() {
+    componentWillMount() {
         const headers = new Headers({
             "Content-Type": "application/json"
         })

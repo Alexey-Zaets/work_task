@@ -9,7 +9,7 @@ class Post extends Component {
         tags: []
     }
 
-    componentDidMount() {
+    componentWillMount() {
         const id = this.props.match.params.id || ''
 
         const headers = new Headers({
