@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import {Link, Route} from 'react-router-dom'
-import Post from './Post'
+import {Link} from 'react-router-dom'
 
 
 class Home extends Component {
