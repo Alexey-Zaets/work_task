@@ -1,6 +1,5 @@
-const defaultState = {auth: false,}
 
-const userLogOutReducer = (state=defaultState, action) => {
+const userLogOutReducer = (state, action) => {
     switch (action.type) {
         case "LOGIN":
             return {...state, auth: true}

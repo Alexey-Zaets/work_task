@@ -10,6 +10,7 @@ class CategoryList extends Component {
     }
 
     componentWillMount() {
+
         const headers = new Headers({
             "Content-Type": "application/json"
         })
@@ -19,7 +20,7 @@ class CategoryList extends Component {
             headers: headers,
             mode: 'cors'
         }
-        fetch('http://0.0.0.0/api/v1/category', req)
+        fetch('http://0.0.0.0/api/v1/category/', req)
             .then(response => response.json())
             .then(data => {
                 const parents = data.results.filter(cat => !cat.parent)

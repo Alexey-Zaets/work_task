@@ -85,7 +85,7 @@ class LoginForm extends Component {
                         } else if (data.non_field_errors) {
                             this.setState({
                                 username_error: '',
-                                username_error: '',
+                                password_error: '',
                                 non_field_errors: data.non_field_errors[0]})
                         }
                     })
@@ -99,9 +99,9 @@ class LoginForm extends Component {
         let {from} = this.props.location.state || {from: {pathname: '/'}}
         let {redirectToReferrer} = this.state
 
-        const username_error_alert = username_error && <div class="alert alert-danger" role="alert">{username_error}</div>
-        const password_error_alert = password_error && <div class="alert alert-danger" role="alert">{password_error}</div>
-        const non_field_errors_alert = non_field_errors && <div class="alert alert-danger" role="alert">{non_field_errors}</div>
+        const username_error_alert = username_error && <div className="alert alert-danger" role="alert">{username_error}</div>
+        const password_error_alert = password_error && <div className="alert alert-danger" role="alert">{password_error}</div>
+        const non_field_errors_alert = non_field_errors && <div className="alert alert-danger" role="alert">{non_field_errors}</div>
 
         if (redirectToReferrer) return <Redirect to={from}/>
 
