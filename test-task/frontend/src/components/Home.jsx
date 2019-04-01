@@ -1,11 +1,16 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import {Link} from 'react-router-dom'
+import {Link, Route} from 'react-router-dom'
+import Post from './Post'
 
 
 class Home extends Component {
-    state = {
-        postsList: [],
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            postsList: []
+        }
     }
 
     componentWillMount() {
@@ -20,7 +25,9 @@ class Home extends Component {
         }
         fetch('http://0.0.0.0/api/v1/post', req)
             .then(response => response.json())
-            .then(data => this.setState({postsList: data.results}))
+            .then(data => {
+                this.setState({postsList: data.results})
+            })
     }
 
     render() {

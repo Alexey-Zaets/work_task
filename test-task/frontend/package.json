@@ -8,6 +8,7 @@
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "react-scripts": "2.1.8",
+    "react-select": "^2.4.2",
     "universal-cookie": "^3.1.0"
   },
   "scripts": {

@@ -3,11 +3,16 @@ import {Link} from 'react-router-dom'
 
 
 class TagList extends Component {
-    state = {
-        tagsList: []
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            tagsList: []
+        }
     }
 
     componentWillMount() {
+
         const headers = new Headers({
             "Content-Type": "application/json"
         })
@@ -17,6 +22,7 @@ class TagList extends Component {
             headers: headers,
             mode: 'cors'
         }
+        
         fetch('http://0.0.0.0/api/v1/tag', req)
             .then(response => response.json())
             .then(data => this.setState({tagsList: data.results}))
@@ -28,7 +34,7 @@ class TagList extends Component {
                 <h3>Tags</h3>
                 {this.state.tagsList.map((tag) => {
                     return (
-                        <Link to={`/tag/${tag.id}/posts/`} className="badge badge-info" key={tag.id}>{tag.title}</Link>
+                        <Link to={`/tag/${tag.id}/posts`} className="badge badge-info" key={tag.id}>{tag.title}</Link>
                     )
                 })}
             </div>

@@ -3,14 +3,25 @@ import {Redirect} from 'react-router-dom'
 
 
 class CreatePostForm extends Component {
-    state = {
-        title: '',
-        category: '',
-        tags: '',
-        content: '',
-        redirectToReferrer: false
-    }
+    constructor(props) {
+        super(props)
 
+        this.state = {
+            title: '',
+            categories: [],
+            tags: [],
+            content: '',
+            redirectToReferrer: false,
+            selected_catigory: ''
+        }
+
+        this.handleTitleChange = this.handleTitleChange.bind(this)
+        this.handleCategoryChange = this.handleCategoryChange.bind(this)
+        this.handleTagsChange = this.handleTagsChange.bind(this)
+        this.handleContentChange = this.handleContentChange.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
+
+    }
 
     handleTitleChange = ({target: {value}}) => {
         this.setState({
@@ -19,14 +30,16 @@ class CreatePostForm extends Component {
     }
 
     handleCategoryChange = ({target: {value}}) => {
+        console.log(value)
         this.setState({
-            category: value
+            selected_catigory: value,
         })
     }
 
     handleTagsChange = ({target: {value}}) => {
+        console.log(value)
         this.setState({
-            tags: value
+            selected_tags: []
         })
     }
 
@@ -36,7 +49,7 @@ class CreatePostForm extends Component {
         })
     }
 
-    handleAddPost = (e) => {
+    handleSubmit = (e) => {
         e.preventDefault();
 
         const headers = new Headers({
@@ -67,8 +80,36 @@ class CreatePostForm extends Component {
             })
     }
 
+    componentWillMount() {
+        const headers = new Headers({
+            "Content-Type": "application/json"
+        })
+
+        const req = {
+            method: 'GET',
+            headers: headers,
+            mode: 'cors'
+        }
+
+        fetch(`http://0.0.0.0/api/v1/tag`, req)
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+                this.setState({tags: data.results})
+            })
+
+        fetch(`http://0.0.0.0/api/v1/category`, req)
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+                this.setState({categories: data.results})
+            })
+    }
+
     render() {
-        const {title, category, tags, content} = this.state;
+        const {title, content, tags, categories} = this.state;
 
         let {from} = this.props.location.state || {from: {pathname: '/'}}
         let {redirectToReferrer} = this.state
@@ -78,7 +119,7 @@ class CreatePostForm extends Component {
         return (
             <div className="col-md-9">
                 <h1 className="text-center">Add new post</h1>
-                <form>
+                <form onSubmit={this.handleSubmit}>
                     <div className='row justify-content-center'>
                         <div className='col-9'>
                             <div className="form-group">
@@ -91,16 +132,24 @@ class CreatePostForm extends Component {
                                 <label className="col-form-label requiredField">
                                     Category
                                 </label>
-                                <select className="select form-control" type="text" name="category" value={category} onChange={this.handleCategoryChange}>
-                                    <option value=""></option>
+                                <select className="select form-control" name='categories' multiple={false} onChange={this.handleCategoryChange}>
+                                    {categories.map((category) => {
+                                        return (
+                                            <option value={category.id} key={category.id}>{category.title}</option>
+                                        )
+                                    })}
                                 </select>
                             </div>
                             <div className="form-group">
                                 <label className="col-form-label requiredField">
                                     Tags
                                 </label>
-                                <select className="selectmultiple form-control" type="text" name="tags" value={tags} onChange={this.handleTagsChange}>
-                                    <option value=""></option>
+                                <select className="selectmultiple form-control" name="tags" multiple="multiple" onChange={this.handleTagsChange}>
+                                    {tags.map((tag) => {
+                                        return (
+                                            <option value={tag.id} key={tag.id}>{tag.title}</option>
+                                        )
+                                    })}
                                 </select>
                             </div>
                             <div className="form-group">
@@ -109,7 +158,7 @@ class CreatePostForm extends Component {
                                 </label>
                                 <textarea className="textarea form-control" type="text" name="content" value={content} onChange={this.handleContentChange} cols="40" rows="10"/>
                             </div>
-                            <button className="btn btn-lg btn-primary btn-block" onClick={this.handleAddPost}>Add</button>
+                            <button className="btn btn-lg btn-primary btn-block" type="submit">Add</button>
                         </div>
                     </div>
                 </form>

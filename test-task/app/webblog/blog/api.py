@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import status, viewsets
+from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
@@ -120,3 +121,22 @@ class CommentViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = (IsAdminUser,)
         return [permission() for permission in permission_classes]
+
+
+class CategoryPosts(APIView):
+
+    def get(self, request, pk):
+        category = Category.objects.get(id=pk)
+        posts = Post.objects.filter(category=category)
+        serializer = PostReadSerializer(posts, many=True)
+        return Response(serializer.data)
+
+
+class TagPosts(APIView):
+
+    def get(self, request, pk):
+        tag = Tag.objects.get(id=pk)
+        posts = Post.objects.filter(tags=tag)
+        print(posts)
+        serializer = PostReadSerializer(posts, many=True)
+        return Response(serializer.data)
