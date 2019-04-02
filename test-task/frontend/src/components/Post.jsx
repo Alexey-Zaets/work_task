@@ -1,15 +1,26 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
 import {Link} from 'react-router-dom'
+import {store} from '../index'
 
 
 class Post extends Component {
-    state = {
-        post: {},
-        tags: []
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            post: {},
+            tags: [],
+        }
     }
 
-    componentWillMount() {
+    componentDidMount() {
+        store.subscribe(() => {
+            if (this.state !== store.getState()) {
+                this.setState(store.getState())
+            }
+        })
+
         const id = this.props.match.params.id || ''
 
         const headers = new Headers({
@@ -27,17 +38,18 @@ class Post extends Component {
                 return response.json()
             })
             .then(data => {
-                this.setState({post: data, tags: data.tags})
+                store.dispatch({type: "POST_DETAIL", post: data, tags: data.tags})
             })
     }
 
     render() {
-        const post = this.state.post
+        const {post, tags} = this.state
+        const {auth} = store.getState()
 
         return (
             <div className="col-md-9">
                 <h1 className="text-center">{post.title}</h1>
-                {this.state.tags.map((tag) => {
+                {tags.map((tag) => {
                     return (
                         <Link to={`/tag/${tag.id}/posts`} className="badge badge-info" key={tag.id}>
                             {tag.title}
@@ -45,8 +57,19 @@ class Post extends Component {
                     )
                 })}
                 <p className="text-justify text-monospace mt-3 border-bottom">{post.content}</p>
+                {auth && <button className="btn btn-primary btn-lg btn-block" onClick={this.onClickUpdate}>Update post</button>}
+                <h3 className="mt-3">Comments</h3>
+                <h3 className="mt-3">Add new comment</h3>
+                <form>
+                    <div className="form-group">
+                        <label className="col-form-label requiredField">Comment</label>
+                        <div>
+                            <textarea className="textarea form-control" name="comment" cols="40" rows="10" required=""></textarea>
+                        </div>
+                    </div>
+                    <button className="btn btn-lg btn-primary btn-block mb-5" type="submit">Add</button>
+                </form>
             </div>
-
         )
     }
 

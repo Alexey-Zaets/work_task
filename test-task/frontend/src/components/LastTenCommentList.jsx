@@ -14,7 +14,7 @@ class LastTenCommentList extends Component {
         // setInterval(this.tick, 1000)
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
         const headers = new Headers({
             "Content-Type": "application/json"

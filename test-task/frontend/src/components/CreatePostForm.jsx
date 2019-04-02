@@ -80,7 +80,7 @@ class CreatePostForm extends Component {
             })
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const headers = new Headers({
             "Content-Type": "application/json"
         })

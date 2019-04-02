@@ -11,12 +11,16 @@ import {createStore} from 'redux'
 import rootReducer from './store/reducers'
 import Sidebar from './components/Sidebar'
 import CreatePostForm from './components/CreatePostForm'
+import Cookies from 'universal-cookie'
+import TagPosts from './components/TagPosts'
 
 
 export let store = createStore(
     rootReducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
+
+export const cookies = new Cookies()
 
 render((
     <Provider store={store}>
@@ -33,6 +37,10 @@ render((
                     </Route>
                     <Route path='/post/:id'>
                         <Route component={Post}/>
+                        <Route component={Sidebar}/>
+                    </Route>
+                    <Route path='/tag/:id/posts'>
+                        <Route component={TagPosts}/>
                         <Route component={Sidebar}/>
                     </Route>
                     <Route path='/login' component={LoginForm}/>

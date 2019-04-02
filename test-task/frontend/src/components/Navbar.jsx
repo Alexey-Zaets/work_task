@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
-import Cookies from 'universal-cookie'
-import {store} from '../index'
+import {store, cookies} from '../index'
 
 
 class Navbarcollapse extends Component {
@@ -9,19 +8,18 @@ class Navbarcollapse extends Component {
     constructor(props) {
         super(props)
 
-        this.cookies = new Cookies()
-
-        if (this.cookies.get('token')) {
-            this.authenticated = true
-        } else {
-            this.authenticated = false
-        }
-
         this.state = {
-            auth: this.authenticated,
+            auth: false,
         }
 
         this.handleOnClickSignOut = this.handleOnClickSignOut.bind(this)
+    }
+
+    componentDidMount() {
+
+        if (cookies.get('token')) {
+            store.dispatch({type: "LOGIN"})
+        }
 
         store.subscribe(() => {
             if (this.state !== store.getState()) {
@@ -32,12 +30,12 @@ class Navbarcollapse extends Component {
 
     handleOnClickSignOut = (e) => {
         e.preventDefault();
-        this.cookies.remove('token')
+        cookies.remove('token')
         store.dispatch({type: "LOGOUT"})
     }
 
     render() {
-        const token = this.cookies.get('token')
+        const token = cookies.get('token')
 
         if (this.state.auth || token) {
             return (

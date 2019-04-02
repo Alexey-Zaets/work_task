@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import {store} from '../index'
 import {Link} from 'react-router-dom'
 
 
@@ -9,9 +10,11 @@ class TagList extends Component {
         this.state = {
             tagsList: []
         }
+
+        this._onClick = this._onClick.bind(this)
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
         const headers = new Headers({
             "Content-Type": "application/json"
@@ -26,6 +29,26 @@ class TagList extends Component {
         fetch('http://0.0.0.0/api/v1/tag', req)
             .then(response => response.json())
             .then(data => this.setState({tagsList: data.results}))
+    }
+
+    _onClick(id, e) {
+        e.preventDefault();
+        const headers = new Headers({
+            "Content-Type": "application/json"
+        })
+
+        const req = {
+            method: 'GET',
+            headers: headers,
+            mode: 'cors'
+        }
+
+        fetch(`http://0.0.0.0/api/v1/tag/${id}/posts`, req)
+            .then(response => response.json())
+            .then(data => {
+                store.dispatch({
+                type: "POST_LIST", postsList: data})
+            })
     }
 
     render() {

@@ -9,7 +9,7 @@ class CategoryList extends Component {
         categoriesList: []
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
         const headers = new Headers({
             "Content-Type": "application/json"
@@ -33,8 +33,6 @@ class CategoryList extends Component {
 
                 console.log('parents', parents, 'sran', categoriesList)
             })
-
-        
     }
 
     render() {

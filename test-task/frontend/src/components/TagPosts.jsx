@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 import {store} from '../index'
 
 
-class Home extends Component {
+class TagPosts extends Component {
     constructor(props) {
         super(props)
 
@@ -22,6 +22,8 @@ class Home extends Component {
             }
         })
 
+        const id = this.props.match.params.id || ''
+
         const headers = new Headers({
             "Content-Type": "application/json"
         })
@@ -32,10 +34,10 @@ class Home extends Component {
             mode: 'cors'
         }
 
-        fetch('http://0.0.0.0/api/v1/post', req)
+        fetch(`http://0.0.0.0/api/v1/tag/${id}/posts`, req)
             .then(response => response.json())
             .then(data => {
-                store.dispatch({type: "POST_LIST", postsList: data.results})
+                store.dispatch({type: "POST_LIST", postsList: data})
             })
     }
 
@@ -54,4 +56,4 @@ class Home extends Component {
 
 }
 
-export default Home
+export default TagPosts
