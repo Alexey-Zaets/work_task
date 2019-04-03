@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import {Link} from 'react-router-dom'
 import {store} from '../index'
 
 
@@ -12,6 +11,7 @@ class Post extends Component {
             post: {},
             tags: [],
         }
+
     }
 
     componentDidMount() {
@@ -51,9 +51,9 @@ class Post extends Component {
                 <h1 className="text-center">{post.title}</h1>
                 {tags.map((tag) => {
                     return (
-                        <Link to={`/tag/${tag.id}/posts`} className="badge badge-info" key={tag.id}>
+                        <span className="badge badge-info" key={tag.id}>
                             {tag.title}
-                        </Link>
+                        </span>
                     )
                 })}
                 <p className="text-justify text-monospace mt-3 border-bottom">{post.content}</p>
@@ -67,7 +67,7 @@ class Post extends Component {
                             <textarea className="textarea form-control" name="comment" cols="40" rows="10" required=""></textarea>
                         </div>
                     </div>
-                    <button className="btn btn-lg btn-primary btn-block mb-5" type="submit">Add</button>
+                    <button className="btn btn-lg btn-primary btn-block mb-5">Add</button>
                 </form>
             </div>
         )

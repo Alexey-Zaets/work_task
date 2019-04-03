@@ -1,14 +1,11 @@
 import React, {Component} from 'react'
-import Cookies from 'universal-cookie'
 import {Redirect} from 'react-router-dom'
-import {store} from '../index'
+import {store, cookies} from '../index'
 
 
 class LoginForm extends Component {
     constructor(props) {
         super(props)
-
-        this.cookies = new Cookies()
 
         this.state = {
             username: '',
@@ -57,9 +54,9 @@ class LoginForm extends Component {
         fetch('http://0.0.0.0/api/v1/user/login/', req)
             .then(response => {
                 if (response.status === 200) {
-                    store.dispatch({type: "LOGIN"})
+                    store.dispatch({type: "LOGIN", username: this.state.username})
                     response.json().then(data => {
-                        this.cookies.set('token', 'JWT ' + data.token, {path: '/'})
+                        cookies.set('token', 'JWT ' + data.token, {path: '/'})
                         this.setState({redirectToReferrer: true})
                     })
                 } else {

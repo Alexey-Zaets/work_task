@@ -1,12 +1,39 @@
 import React, {Component} from 'react'
 import './style.css'
-import {Link} from 'react-router-dom'
+import {store} from '../../index'
 
 
 class CategoryList extends Component {
-    state = {
-        parents: null,
-        categoriesList: []
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            categoriesList: [],
+        }
+
+        this.onCategoryClick = this.onCategoryClick.bind(this)
+    }
+
+    onCategoryClick(id, e) {
+        e.preventDefault();
+        const headers = new Headers({
+            "Content-Type": "application/json"
+        })
+
+        const req = {
+            method: 'GET',
+            headers: headers,
+            mode: 'cors'
+        }
+
+        fetch(`http://0.0.0.0/api/v1/category/${id}/posts`, req)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    store.dispatch({
+                    type: "POST_LIST", postsList: data})
+                }
+            })
     }
 
     componentDidMount() {
@@ -23,15 +50,9 @@ class CategoryList extends Component {
         fetch('http://0.0.0.0/api/v1/category/', req)
             .then(response => response.json())
             .then(data => {
-                const parents = data.results.filter(cat => !cat.parent)
-                const categoriesList = data.results.filter(cat => cat.parent)
-
                 this.setState({
-                    categoriesList,
-                    parents
+                    categoriesList: data.results,
                 })
-
-                console.log('parents', parents, 'sran', categoriesList)
             })
     }
 
@@ -44,13 +65,13 @@ class CategoryList extends Component {
                         if (!category.children.length) {
                             return (
                                 <li className="category-list__li" key={category.id}>
-                                    <Link to={`/category/${category.id}/posts`} key={category.id}>{category.title}</Link>
+                                    <span style={{cursor: 'pointer'}} onClick={(e) => this.onCategoryClick(category.id, e)} key={category.id}>{category.title}</span>
                                 </li>
                             )
                         } else {
                             return (
                                 <ul className="children" key={category.id}>
-                                    <Link to={`/category/${category.id}/posts`} key={category.id}>{category.title}</Link>
+                                    <span style={{cursor: 'pointer'}} onClick={(e) => this.onCategoryClick(category.id, e)} key={category.id}>{category.title}</span>
                                 </ul>
                             )
                         }

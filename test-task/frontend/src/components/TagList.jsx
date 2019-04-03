@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {store} from '../index'
-import {Link} from 'react-router-dom'
 
 
 class TagList extends Component {
@@ -8,10 +7,10 @@ class TagList extends Component {
         super(props)
 
         this.state = {
-            tagsList: []
+            tagsList: [],
         }
 
-        this._onClick = this._onClick.bind(this)
+        this.onTagClick = this.onTagClick.bind(this)
     }
 
     componentDidMount() {
@@ -31,7 +30,7 @@ class TagList extends Component {
             .then(data => this.setState({tagsList: data.results}))
     }
 
-    _onClick(id, e) {
+    onTagClick(id, e) {
         e.preventDefault();
         const headers = new Headers({
             "Content-Type": "application/json"
@@ -57,7 +56,7 @@ class TagList extends Component {
                 <h3>Tags</h3>
                 {this.state.tagsList.map((tag) => {
                     return (
-                        <Link to={`/tag/${tag.id}/posts`} className="badge badge-info" key={tag.id}>{tag.title}</Link>
+                        <span style={{cursor: 'pointer'}} className="badge badge-info" key={tag.id} onClick={(e) => this.onTagClick(tag.id, e)}>{tag.title}</span>
                     )
                 })}
             </div>

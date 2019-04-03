@@ -11,7 +11,6 @@ class LastTenCommentList extends Component {
         }
 
         this.handleOnCommentClick = this.handleOnCommentClick.bind(this);
-        // setInterval(this.tick, 1000)
     }
 
     componentDidMount() {
@@ -35,15 +34,6 @@ class LastTenCommentList extends Component {
             })
 
     }
-
-    // tick() {
-    //     const currentIndex = this.state.currentIndex
-    //     if (this.state.currentIndex < this.state.commentsList.length) {
-    //         this.setState({currentIndex: currentIndex + 1})
-    //     } else {
-    //         this.setState({currentIndex: 0})
-    //     }
-    // }
 
     handleOnCommentClick(e) {
         e.preventDefault();

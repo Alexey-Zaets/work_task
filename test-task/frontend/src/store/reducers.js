@@ -3,9 +3,9 @@ const defaultState = {auth: false}
 const userLogOutReducer = (state=defaultState, action) => {
     switch (action.type) {
         case "LOGIN":
-            return {...state, auth: true}
+            return {...state, auth: true, username: action.username}
         case "LOGOUT":
-            return {...state, auth: false}
+            return {...state, auth: false, username: ''}
         case "POST_LIST":
             return {...state, postsList: action.postsList}
         case "POST_DETAIL":

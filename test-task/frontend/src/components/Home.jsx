@@ -8,6 +8,8 @@ class Home extends Component {
     constructor(props) {
         super(props)
 
+        this._isMounted = false;
+
         this.state = {
             postsList: []
         }
@@ -15,6 +17,8 @@ class Home extends Component {
     }
 
     componentDidMount() {
+
+        this._isMounted = true;
 
         store.subscribe(() => {
             if (this.state !== store.getState()) {
@@ -35,8 +39,14 @@ class Home extends Component {
         fetch('http://0.0.0.0/api/v1/post', req)
             .then(response => response.json())
             .then(data => {
-                store.dispatch({type: "POST_LIST", postsList: data.results})
+                if (this._isMounted) {
+                    store.dispatch({type: "POST_LIST", postsList: data.results})
+                }
             })
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {

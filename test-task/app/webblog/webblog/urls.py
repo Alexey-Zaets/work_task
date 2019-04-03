@@ -25,7 +25,7 @@ from rest_framework.schemas import get_schema_view
 from rest_framework_jwt.views import obtain_jwt_token
 from blog.api import RegisterUserView, PostViewSet, TagViewSet, \
 CategoryViewSet, CommentViewSet, LastTenCommentsViewSet, UserViewSet, \
-CategoryPosts, TagPosts
+CategoryPosts, TagPosts, AuthorPosts
 
 
 urlpatterns = [
@@ -150,5 +150,10 @@ urlpatterns += format_suffix_patterns([
         'api/v1/tag/<int:pk>/posts/',
         TagPosts.as_view(),
         name='tag_posts_list'
+    ),
+    path(
+        'api/v1/user/<str:username>/posts/',
+        AuthorPosts.as_view(),
+        name='author_posts_list'
     )
 ])

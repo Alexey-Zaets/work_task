@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import {Link} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
 import {store} from '../index'
 
 
-class TagPosts extends Component {
+class Blog extends Component {
     constructor(props) {
         super(props)
 
@@ -22,7 +22,7 @@ class TagPosts extends Component {
             }
         })
 
-        const id = this.props.match.params.id || ''
+        const username = this.props.match.params.username || ''
 
         const headers = new Headers({
             "Content-Type": "application/json"
@@ -34,7 +34,7 @@ class TagPosts extends Component {
             mode: 'cors'
         }
 
-        fetch(`http://0.0.0.0/api/v1/tag/${id}/posts`, req)
+        fetch(`http://0.0.0.0/api/v1/user/${username}/posts`, req)
             .then(response => response.json())
             .then(data => {
                 store.dispatch({type: "POST_LIST", postsList: data})
@@ -42,6 +42,11 @@ class TagPosts extends Component {
     }
 
     render() {
+        const username = this.props.match.params.username || ''
+
+        if (username === '') {
+            return <Redirect to='/login'/>
+        }
 
         return (
             <div>
@@ -56,4 +61,4 @@ class TagPosts extends Component {
 
 }
 
-export default TagPosts
+export default Blog

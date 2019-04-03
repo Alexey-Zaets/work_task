@@ -36,13 +36,14 @@ class Navbarcollapse extends Component {
 
     render() {
         const token = cookies.get('token')
+        const username = store.getState().username
 
         if (this.state.auth || token) {
             return (
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav">
                         <li className="nav-item active">
-                            <Link className="nav-link" to="/post">Blog</Link>
+                            <Link className="nav-link" to={`/blog/${username}`} >Blog</Link>
                         </li>
                         <li className="nav-item active">
                             <Link className="nav-link" to="/add">+ Add new post</Link>
