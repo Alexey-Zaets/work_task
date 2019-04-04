@@ -4,7 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from django_filters import rest_framework as filters
 from blog.models import Post, Tag, Category, Comment
+from blog.filters import PostFilter
 from blog.serializers import RegisterUserSerializer, PostSerializer, \
 TagSerializer, CategorySerializer, CommentSerializer, UserSerializer, \
 PostReadSerializer, CommentReadSerializer
@@ -56,6 +58,8 @@ class PostViewSet(viewsets.ModelViewSet):
     '''
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = PostFilter
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve',]:
@@ -139,30 +143,3 @@ class CommentViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = (IsAdminUser,)
         return [permission() for permission in permission_classes]
-
-
-class CategoryPosts(APIView):
-
-    def get(self, request, pk):
-        category = Category.objects.get(id=pk)
-        posts = Post.objects.filter(category=category)
-        serializer = PostReadSerializer(posts, many=True)
-        return Response(serializer.data)
-
-
-class TagPosts(APIView):
-
-    def get(self, request, pk):
-        tag = Tag.objects.get(id=pk)
-        posts = Post.objects.filter(tags=tag)
-        serializer = PostReadSerializer(posts, many=True)
-        return Response(serializer.data)
-
-
-class AuthorPosts(APIView):
-
-    def get(self, request, username):
-        author = User.objects.get(username=username)
-        posts = Post.objects.filter(author=author)
-        serializer = PostReadSerializer(posts, many=True)
-        return Response(serializer.data)
