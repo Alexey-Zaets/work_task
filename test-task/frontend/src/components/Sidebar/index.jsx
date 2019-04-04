@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import './style.css'
-import {store} from '../../index'
+import {Link} from 'react-router-dom'
 
 
 class TagList extends Component {
@@ -10,8 +10,6 @@ class TagList extends Component {
         this.state = {
             tagsList: [],
         }
-
-        this.onTagClick = this.onTagClick.bind(this)
     }
 
     componentDidMount() {
@@ -31,33 +29,13 @@ class TagList extends Component {
             .then(data => this.setState({tagsList: data.results}))
     }
 
-    onTagClick(id, e) {
-        e.preventDefault();
-        const headers = new Headers({
-            "Content-Type": "application/json"
-        })
-
-        const req = {
-            method: 'GET',
-            headers: headers,
-            mode: 'cors'
-        }
-
-        fetch(`http://0.0.0.0/api/v1/tag/${id}/posts`, req)
-            .then(response => response.json())
-            .then(data => {
-                store.dispatch({
-                type: "POST_LIST", postsList: data})
-            })
-    }
-
     render() {
         return (
             <div>
                 <h3>Tags</h3>
                 {this.state.tagsList.map((tag) => {
                     return (
-                        <span style={{cursor: 'pointer'}} className="badge badge-info" key={tag.id} onClick={(e) => this.onTagClick(tag.id, e)}>{tag.title}</span>
+                        <Link to={{pathname: '/', search: `tags__title=${tag.title}`}} className="badge badge-info" key={tag.id}>{tag.title}</Link>
                     )
                 })}
             </div>
@@ -72,29 +50,6 @@ class CategoryList extends Component {
         this.state = {
             categoriesList: [],
         }
-
-        this.onCategoryClick = this.onCategoryClick.bind(this)
-    }
-
-    onCategoryClick(id, e) {
-        e.preventDefault();
-        const headers = new Headers({
-            "Content-Type": "application/json"
-        })
-
-        const req = {
-            method: 'GET',
-            headers: headers,
-            mode: 'cors'
-        }
-
-        fetch(`http://0.0.0.0/api/v1/category/${id}/posts`, req)
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    store.dispatch({type: "POST_LIST", postsList: data})
-                }
-            })
     }
 
     componentDidMount() {
@@ -126,13 +81,13 @@ class CategoryList extends Component {
                         if (!category.children.length) {
                             return (
                                 <li className="category-list__li" key={category.id}>
-                                    <span style={{cursor: 'pointer'}} onClick={(e) => this.onCategoryClick(category.id, e)} key={category.id}>{category.title}</span>
+                                    <Link to={{pathname: '/', search: `category__title=${category.title}`}} key={category.id}>{category.title}</Link>
                                 </li>
                             )
                         } else {
                             return (
                                 <ul className="children" key={category.id}>
-                                    <span style={{cursor: 'pointer'}} onClick={(e) => this.onCategoryClick(category.id, e)} key={category.id}>{category.title}</span>
+                                    <Link to={{pathname: '/', search: `category__title=${category.title}`}} key={category.id}>{category.title}</Link>
                                 </ul>
                             )
                         }
@@ -192,10 +147,13 @@ class LastTenCommentList extends Component {
         const author = comment.author ? comment.author.username: 'Anonymous'
 
         return (
-            <div className="card mt-3" style={{width: "18rem"}}  onClick={this.handleOnCommentClick}>
-                <div className="card-body">
-                    <h5 className="card-title">{author}</h5>
-                    <p className="card-text">{comment.comment}</p>
+            <div>
+                <h3>Last comments</h3>
+                <div className="card mt-3" style={{width: "18rem"}}  onClick={this.handleOnCommentClick}>
+                    <div className="card-body">
+                        <h5 className="card-title">{author}</h5>
+                        <p className="card-text">{comment.comment}</p>
+                    </div>
                 </div>
             </div>
         )

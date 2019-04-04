@@ -3,7 +3,6 @@ import {render} from 'react-dom'
 import App from './components/App'
 import {BrowserRouter, Switch, Route} from 'react-router-dom'
 import Home from './components/Home'
-import Blog from './components/Blog'
 import Post from './components/Post'
 import LoginForm from './components/LoginForm'
 import RegisterForm from './components/RegisterForm'
@@ -35,8 +34,8 @@ render((
                         <Route component={CreatePostForm}/>
                         <Route component={Sidebar}/>
                     </Route>
-                    <Route exact path='/blog/:username'>
-                        <Route component={Blog}/>
+                    <Route exact path='/blog'>
+                        <Route component={Home}/>
                         <Route component={Sidebar}/>
                     </Route>
                     <Route path='/post/:id'>

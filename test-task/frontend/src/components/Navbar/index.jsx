@@ -17,33 +17,33 @@ class Navbarcollapse extends Component {
 
     componentDidMount() {
 
-        if (cookies.get('token')) {
-            store.dispatch({type: "LOGIN"})
-        }
-
         store.subscribe(() => {
             if (this.state !== store.getState()) {
                 this.setState(store.getState())
             }
         })
+
+        if (cookies.get('token')) {
+            store.dispatch({type: "LOGIN"})
+        }
     }
 
     handleOnClickSignOut = (e) => {
         e.preventDefault();
         cookies.remove('token');
+        cookies.remove('username')
         store.dispatch({type: "LOGOUT"});
     }
 
     render() {
-        const token = cookies.get('token')
-        const username = store.getState().username
+        const username = cookies.get('username')
 
-        if (this.state.auth || token) {
+        if (this.state.auth) {
             return (
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav">
                         <li className="nav-item active">
-                            <Link className="nav-link" to={`/blog/${username}`} >Blog</Link>
+                            <Link className="nav-link" to={{pathname: '/blog/', search: `author__username=${username}`}}>Blog</Link>
                         </li>
                         <li className="nav-item active">
                             <Link className="nav-link" to="/add">+ Add new post</Link>

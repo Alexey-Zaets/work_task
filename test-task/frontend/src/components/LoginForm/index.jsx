@@ -23,15 +23,11 @@ class LoginForm extends Component {
 
 
     handleUsernameChange = ({target: {value}}) => {
-        this.setState({
-            username: value
-        })
+        this.setState({username: value})
     }
 
     handlePasswordChange = ({target: {value}}) => {
-        this.setState({
-            password: value
-        })
+        this.setState({password: value})
     }
 
     handleClickSignin = (e) => {
@@ -57,6 +53,7 @@ class LoginForm extends Component {
                     store.dispatch({type: "LOGIN", username: this.state.username})
                     response.json().then(data => {
                         cookies.set('token', 'JWT ' + data.token, {path: '/'})
+                        cookies.set('username', this.state.username, {path: '/'})
                         this.setState({redirectToReferrer: true})
                     })
                 } else {
