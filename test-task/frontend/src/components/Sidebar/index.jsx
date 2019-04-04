@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
-import CategoryList from './CategoryList'
-import TagList from './TagList'
-import LastTenCommentList from './LastTenCommentList'
+import CategoryList from '../CategoryList'
+import TagList from '../TagList'
+import LastTenCommentList from '../LastTenCommentList'
 
 
 class Sidebar extends Component {

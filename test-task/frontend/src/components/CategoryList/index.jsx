@@ -30,8 +30,7 @@ class CategoryList extends Component {
             .then(response => response.json())
             .then(data => {
                 if (data.length > 0) {
-                    store.dispatch({
-                    type: "POST_LIST", postsList: data})
+                    store.dispatch({type: "POST_LIST", postsList: data})
                 }
             })
     }

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
-import {store, cookies} from '../index'
+import {store, cookies} from '../../index'
 
 
 class Navbarcollapse extends Component {
@@ -30,8 +30,8 @@ class Navbarcollapse extends Component {
 
     handleOnClickSignOut = (e) => {
         e.preventDefault();
-        cookies.remove('token')
-        store.dispatch({type: "LOGOUT"})
+        cookies.remove('token');
+        store.dispatch({type: "LOGOUT"});
     }
 
     render() {

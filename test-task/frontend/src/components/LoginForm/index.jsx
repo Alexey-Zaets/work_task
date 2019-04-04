@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Redirect} from 'react-router-dom'
-import {store, cookies} from '../index'
+import {store, cookies} from '../../index'
 
 
 class LoginForm extends Component {

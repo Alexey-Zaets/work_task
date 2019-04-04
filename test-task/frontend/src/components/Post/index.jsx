@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import {store} from '../index'
+import {store} from '../../index'
 
 
 class Post extends Component {

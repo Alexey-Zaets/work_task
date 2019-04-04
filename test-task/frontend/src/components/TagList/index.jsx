@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {store} from '../index'
+import {store} from '../../index'
 
 
 class TagList extends Component {

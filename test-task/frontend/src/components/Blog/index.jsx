@@ -1,14 +1,12 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import {Link} from 'react-router-dom'
-import {store} from '../index'
+import {Link, Redirect} from 'react-router-dom'
+import {store} from '../../index'
 
 
-class Home extends Component {
+class Blog extends Component {
     constructor(props) {
         super(props)
-
-        this._isMounted = false;
 
         this.state = {
             postsList: []
@@ -18,13 +16,13 @@ class Home extends Component {
 
     componentDidMount() {
 
-        this._isMounted = true;
-
         store.subscribe(() => {
             if (this.state !== store.getState()) {
                 this.setState(store.getState())
             }
         })
+
+        const username = this.props.match.params.username || ''
 
         const headers = new Headers({
             "Content-Type": "application/json"
@@ -36,20 +34,19 @@ class Home extends Component {
             mode: 'cors'
         }
 
-        fetch('http://0.0.0.0/api/v1/post', req)
+        fetch(`http://0.0.0.0/api/v1/user/${username}/posts`, req)
             .then(response => response.json())
             .then(data => {
-                if (this._isMounted) {
-                    store.dispatch({type: "POST_LIST", postsList: data.results})
-                }
+                store.dispatch({type: "POST_LIST", postsList: data})
             })
     }
 
-    componentWillUnmount() {
-        this._isMounted = false;
-    }
-
     render() {
+        const username = this.props.match.params.username || ''
+
+        if (username === '') {
+            return <Redirect to='/login'/>
+        }
 
         return (
             <div>
@@ -64,4 +61,4 @@ class Home extends Component {
 
 }
 
-export default Home
+export default Blog

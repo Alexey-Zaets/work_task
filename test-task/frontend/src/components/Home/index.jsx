@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import {Link, Redirect} from 'react-router-dom'
-import {store} from '../index'
+import {Link} from 'react-router-dom'
+import {store} from '../../index'
 
 
-class Blog extends Component {
+class Home extends Component {
     constructor(props) {
         super(props)
 
@@ -15,14 +15,11 @@ class Blog extends Component {
     }
 
     componentDidMount() {
-
         store.subscribe(() => {
             if (this.state !== store.getState()) {
                 this.setState(store.getState())
             }
         })
-
-        const username = this.props.match.params.username || ''
 
         const headers = new Headers({
             "Content-Type": "application/json"
@@ -34,19 +31,15 @@ class Blog extends Component {
             mode: 'cors'
         }
 
-        fetch(`http://0.0.0.0/api/v1/user/${username}/posts`, req)
+        fetch('http://0.0.0.0/api/v1/post', req)
             .then(response => response.json())
             .then(data => {
-                store.dispatch({type: "POST_LIST", postsList: data})
+                store.dispatch({type: "POST_LIST", postsList: data.results});
             })
     }
 
-    render() {
-        const username = this.props.match.params.username || ''
 
-        if (username === '') {
-            return <Redirect to='/login'/>
-        }
+    render() {
 
         return (
             <div>
@@ -61,4 +54,4 @@ class Blog extends Component {
 
 }
 
-export default Blog
+export default Home

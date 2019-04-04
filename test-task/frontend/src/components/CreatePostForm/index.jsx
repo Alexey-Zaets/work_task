@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Redirect} from 'react-router-dom'
-import {store, cookies} from '../index'
+import {store, cookies} from '../../index'
 
 
 class CreatePostForm extends Component {
@@ -36,6 +36,7 @@ class CreatePostForm extends Component {
     }
 
     handleTagsChange = ({target: {value}}) => {
+        // need add logic for tags
         const selected_tags = this.state.selected_tags
         selected_tags.push(value)
         this.setState({selected_tags: selected_tags})
