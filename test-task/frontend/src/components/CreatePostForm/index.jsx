@@ -1,19 +1,21 @@
 import React, {Component} from 'react'
 import {Redirect} from 'react-router-dom'
 import {store, cookies} from '../../index'
+import Select from 'react-select'
 
 
 class CreatePostForm extends Component {
     constructor(props) {
         super(props)
 
+        this.categoryRef = React.createRef();
+        this.tagsRef = React.createRef();
+
         this.state = {
             title: '',
             categories: [],
             form_tags: [],
             content: '',
-            selected_category: {},
-            selected_tags: []
         }
 
         this.handleTitleChange = this.handleTitleChange.bind(this)
@@ -38,8 +40,11 @@ class CreatePostForm extends Component {
     handleTagsChange = ({target: {value}}) => {
         // need add logic for tags
         const selected_tags = this.state.selected_tags
-        selected_tags.push(value)
-        this.setState({selected_tags: selected_tags})
+        const form_tags = this.state.form_tags
+        const tag = form_tags[value]
+        form_tags.splice(value, 1)
+        selected_tags.push(tag.id)
+        this.setState({form_tags: form_tags, selected_tags: selected_tags})
     }
 
     handleContentChange = ({target: {value}}) => {
@@ -50,8 +55,12 @@ class CreatePostForm extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
+        const selected_tags = []
+        const selected_category = this.categoryRef.current.state.value.value
 
-        console.log(e.currentTarget)
+        this.tagsRef.current.state.value.map((tag) => {
+            selected_tags.push(tag.value)
+        })
 
         const headers = new Headers({
             "Content-Type": "application/json",
@@ -64,8 +73,8 @@ class CreatePostForm extends Component {
             mode: 'cors',
             body: JSON.stringify({
                 title: this.state.title,
-                tags:this.state.selected_tags,
-                category: this.state.selected_category,
+                tags: selected_tags,
+                category: selected_category,
                 content: this.state.content,
                 author: store.getState().username
             })
@@ -126,6 +135,17 @@ class CreatePostForm extends Component {
     render() {
         const {title, content, form_tags, categories} = this.state;
 
+        const tagsList = []
+        const categoriesList = []
+
+        form_tags.map((tag) => {
+            tagsList.push({value: tag.id, label: tag.title})
+        })
+
+        categories.map((cat) => {
+            categoriesList.push({value: cat.id, label: cat.title})
+        })
+
         if (!store.getState().auth) return <Redirect to='/login'/>
 
         return (
@@ -144,25 +164,27 @@ class CreatePostForm extends Component {
                                 <label className="col-form-label requiredField">
                                     Category
                                 </label>
-                                <select className="select form-control" name='categories' multiple={false} onChange={this.handleCategoryChange}>
+                                {/*<select className="select form-control" name='categories' multiple={false} onChange={this.handleCategoryChange}>
                                     {categories.map((category) => {
                                         return (
                                             <option value={category.id} key={category.id}>{category.title}</option>
                                         )
                                     })}
-                                </select>
+                                </select>*/}
+                                <Select ref={this.categoryRef} defaultValue={[categoriesList[0]]} name="categories" options={categoriesList} className="basic-single" classNamePrefix="select"/>
                             </div>
                             <div className="form-group">
                                 <label className="col-form-label requiredField">
                                     Tags
                                 </label>
-                                <select className="selectmultiple form-control" name="tags" multiple={true} onChange={this.handleTagsChange}>
-                                    {form_tags.map((tag) => {
+                                {/*<select className="selectmultiple form-control" name="tags" multiple={true} onChange={this.handleTagsChange}>
+                                    {form_tags.map((tag, index) => {
                                         return (
-                                            <option value={tag.id} key={tag.id}>{tag.title}</option>
+                                            <option value={index} key={tag.id}>{tag.title}</option>
                                         )
                                     })}
-                                </select>
+                                </select>*/}
+                                <Select ref={this.tagsRef} defaultValue={[]} isMulti name="tags" options={tagsList} className="basic-multi-select" classNamePrefix="select"/>
                             </div>
                             <div className="form-group">
                                 <label className="col-form-label requiredField">
