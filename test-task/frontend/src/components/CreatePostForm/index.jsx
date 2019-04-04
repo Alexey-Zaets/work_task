@@ -62,7 +62,7 @@ class CreatePostForm extends Component {
                 tags: selected_tags,
                 category: selected_category,
                 content: this.state.content,
-                author: store.getState().username
+                author: store.getState().username || cookies.get('username')
             })
         }
 

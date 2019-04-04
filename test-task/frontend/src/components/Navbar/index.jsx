@@ -36,7 +36,7 @@ class Navbarcollapse extends Component {
     }
 
     render() {
-        const username = cookies.get('username')
+        const username = store.getState().username || cookies.get('username')
 
         if (this.state.auth) {
             return (
