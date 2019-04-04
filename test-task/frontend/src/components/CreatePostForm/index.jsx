@@ -19,8 +19,6 @@ class CreatePostForm extends Component {
         }
 
         this.handleTitleChange = this.handleTitleChange.bind(this)
-        this.handleCategoryChange = this.handleCategoryChange.bind(this)
-        this.handleTagsChange = this.handleTagsChange.bind(this)
         this.handleContentChange = this.handleContentChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
 
@@ -30,21 +28,6 @@ class CreatePostForm extends Component {
         this.setState({
             title: value
         })
-    }
-
-    handleCategoryChange = ({target: {value}}) => {
-        console.log(value)
-        this.setState({selected_category: value})
-    }
-
-    handleTagsChange = ({target: {value}}) => {
-        // need add logic for tags
-        const selected_tags = this.state.selected_tags
-        const form_tags = this.state.form_tags
-        const tag = form_tags[value]
-        form_tags.splice(value, 1)
-        selected_tags.push(tag.id)
-        this.setState({form_tags: form_tags, selected_tags: selected_tags})
     }
 
     handleContentChange = ({target: {value}}) => {
@@ -164,26 +147,12 @@ class CreatePostForm extends Component {
                                 <label className="col-form-label requiredField">
                                     Category
                                 </label>
-                                {/*<select className="select form-control" name='categories' multiple={false} onChange={this.handleCategoryChange}>
-                                    {categories.map((category) => {
-                                        return (
-                                            <option value={category.id} key={category.id}>{category.title}</option>
-                                        )
-                                    })}
-                                </select>*/}
                                 <Select ref={this.categoryRef} defaultValue={[categoriesList[0]]} name="categories" options={categoriesList} className="basic-single" classNamePrefix="select"/>
                             </div>
                             <div className="form-group">
                                 <label className="col-form-label requiredField">
                                     Tags
                                 </label>
-                                {/*<select className="selectmultiple form-control" name="tags" multiple={true} onChange={this.handleTagsChange}>
-                                    {form_tags.map((tag, index) => {
-                                        return (
-                                            <option value={index} key={tag.id}>{tag.title}</option>
-                                        )
-                                    })}
-                                </select>*/}
                                 <Select ref={this.tagsRef} defaultValue={[]} isMulti name="tags" options={tagsList} className="basic-multi-select" classNamePrefix="select"/>
                             </div>
                             <div className="form-group">

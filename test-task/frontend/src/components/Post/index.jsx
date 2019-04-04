@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
 import {store} from '../../index'
+import {Link} from 'react-router-dom'
 
 
 class Post extends Component {
@@ -51,9 +52,7 @@ class Post extends Component {
                 <h1 className="text-center">{post.title}</h1>
                 {tags.map((tag) => {
                     return (
-                        <span className="badge badge-info" key={tag.id}>
-                            {tag.title}
-                        </span>
+                        <Link to={{pathname: '/', search: `tags__title=${tag.title}`}} className="badge badge-info" key={tag.id}>{tag.title}</Link>
                     )
                 })}
                 <p className="text-justify text-monospace mt-3 border-bottom">{post.content}</p>
