@@ -11,12 +11,15 @@ import {createStore} from 'redux'
 import rootReducer from './store/reducers'
 import Sidebar from './components/Sidebar'
 import CreatePostForm from './components/CreatePostForm'
+import Cookies from 'universal-cookie'
 
 
 export let store = createStore(
     rootReducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
+
+export const cookies = new Cookies()
 
 render((
     <Provider store={store}>
@@ -29,6 +32,10 @@ render((
                     </Route>
                     <Route exact path='/add'>
                         <Route component={CreatePostForm}/>
+                        <Route component={Sidebar}/>
+                    </Route>
+                    <Route exact path='/blog'>
+                        <Route component={Home}/>
                         <Route component={Sidebar}/>
                     </Route>
                     <Route path='/post/:id'>

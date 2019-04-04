@@ -2,9 +2,11 @@ from django.contrib.auth.models import User
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from django_filters import rest_framework as filters
 from blog.models import Post, Tag, Category, Comment
+from blog.filters import PostFilter
 from blog.serializers import RegisterUserSerializer, PostSerializer, \
 TagSerializer, CategorySerializer, CommentSerializer, UserSerializer, \
 PostReadSerializer, CommentReadSerializer
@@ -50,17 +52,37 @@ class RegisterUserView(CreateAPIView):
     permission_classes = (AllowAny,)
 
 
-class PostViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
+class PostViewSet(viewsets.ModelViewSet):
     '''
     Processes requests for data retrieval by posts
     '''
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = PostFilter
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve',]:
+            permission_classes = (AllowAny,)
+        elif self.action == 'create':
+            permission_classes = (IsAuthenticated,)
+        else:
+            permission_classes = (IsAdminUser,)
+        return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return PostReadSerializer
         return PostSerializer
+
+    def create(self, request):
+        author = User.objects.get(username=request.data.get('author'))
+        request.data.update({'author': author.id})
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class TagViewSet(CustomPermissionMixin, viewsets.ModelViewSet):
@@ -121,22 +143,3 @@ class CommentViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = (IsAdminUser,)
         return [permission() for permission in permission_classes]
-
-
-class CategoryPosts(APIView):
-
-    def get(self, request, pk):
-        category = Category.objects.get(id=pk)
-        posts = Post.objects.filter(category=category)
-        serializer = PostReadSerializer(posts, many=True)
-        return Response(serializer.data)
-
-
-class TagPosts(APIView):
-
-    def get(self, request, pk):
-        tag = Tag.objects.get(id=pk)
-        posts = Post.objects.filter(tags=tag)
-        print(posts)
-        serializer = PostReadSerializer(posts, many=True)
-        return Response(serializer.data)

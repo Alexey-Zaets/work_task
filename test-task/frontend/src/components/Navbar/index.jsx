@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
-import Cookies from 'universal-cookie'
-import {store} from '../index'
+import {store, cookies} from '../../index'
 
 
 class Navbarcollapse extends Component {
@@ -9,42 +8,42 @@ class Navbarcollapse extends Component {
     constructor(props) {
         super(props)
 
-        this.cookies = new Cookies()
-
-        if (this.cookies.get('token')) {
-            this.authenticated = true
-        } else {
-            this.authenticated = false
-        }
-
         this.state = {
-            auth: this.authenticated,
+            auth: false,
         }
 
         this.handleOnClickSignOut = this.handleOnClickSignOut.bind(this)
+    }
+
+    componentDidMount() {
 
         store.subscribe(() => {
             if (this.state !== store.getState()) {
                 this.setState(store.getState())
             }
         })
+
+        if (cookies.get('token')) {
+            store.dispatch({type: "LOGIN"})
+        }
     }
 
     handleOnClickSignOut = (e) => {
         e.preventDefault();
-        this.cookies.remove('token')
-        store.dispatch({type: "LOGOUT"})
+        cookies.remove('token');
+        cookies.remove('username')
+        store.dispatch({type: "LOGOUT"});
     }
 
     render() {
-        const token = this.cookies.get('token')
+        const username = store.getState().username || cookies.get('username')
 
-        if (this.state.auth || token) {
+        if (this.state.auth) {
             return (
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav">
                         <li className="nav-item active">
-                            <Link className="nav-link" to="/post">Blog</Link>
+                            <Link className="nav-link" to={{pathname: '/blog/', search: `author__username=${username}`}}>Blog</Link>
                         </li>
                         <li className="nav-item active">
                             <Link className="nav-link" to="/add">+ Add new post</Link>
