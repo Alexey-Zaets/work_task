@@ -16,6 +16,9 @@ class CreatePostForm extends Component {
             categories: [],
             form_tags: [],
             content: '',
+            title_rrorr: '',
+            tags_error: '',
+            content_error: ''
         }
 
         this.handleTitleChange = this.handleTitleChange.bind(this)
@@ -70,12 +73,19 @@ class CreatePostForm extends Component {
                         title: '',
                         content: '',
                         selected_category: {},
-                        selected_tags: []
+                        selected_tags: [],
+                        title_error: '',
+                        tags_error: '',
+                        content_error: ''
                     })
                     alert('Post was added')
                 } else {
-                    response.json().then((json) =>{
-                        console.log(json)
+                    response.json().then((json) => {
+                        this.setState({
+                            title_error: json.title && json.title[0],
+                            tags_error: json.tags && json.tags[0],
+                            content_error: json.content && json.content[0]
+                        })
                     })
                 }
             })
@@ -116,7 +126,7 @@ class CreatePostForm extends Component {
     }
 
     render() {
-        const {title, content, form_tags, categories} = this.state;
+        const {title, content, form_tags, categories, title_error, tags_error, content_error} = this.state;
 
         const tagsList = []
         const categoriesList = []
@@ -128,6 +138,10 @@ class CreatePostForm extends Component {
         categories.map((cat) => {
             categoriesList.push({value: cat.id, label: cat.title})
         })
+
+        const title_error_alert = title_error && <div className="alert alert-danger" role="alert">{title_error}</div>
+        const tags_error_alert = tags_error && <div className="alert alert-danger" role="alert">{tags_error}</div>
+        const content_error_alert = content_error && <div className="alert alert-danger" role="alert">{content_error}</div>
 
         if (!store.getState().auth) return <Redirect to='/login'/>
 
@@ -143,6 +157,7 @@ class CreatePostForm extends Component {
                                 </label>
                                 <input className="textinput textInput form-control" type="text" name="title" value={title} onChange={this.handleTitleChange}/>
                             </div>
+                            {title_error_alert}
                             <div className="form-group">
                                 <label className="col-form-label requiredField">
                                     Category
@@ -155,12 +170,14 @@ class CreatePostForm extends Component {
                                 </label>
                                 <Select ref={this.tagsRef} defaultValue={[]} isMulti name="tags" options={tagsList} className="basic-multi-select" classNamePrefix="select"/>
                             </div>
+                            {tags_error_alert}
                             <div className="form-group">
                                 <label className="col-form-label requiredField">
                                     Content
                                 </label>
                                 <textarea className="textarea form-control" type="text" name="content" value={content} onChange={this.handleContentChange} cols="40" rows="10"/>
                             </div>
+                            {content_error_alert}
                             <button className="btn btn-lg btn-primary btn-block" type="submit">Add</button>
                         </div>
                     </div>

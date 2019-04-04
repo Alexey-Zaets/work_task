@@ -50,59 +50,19 @@ class RegisteForm extends Component {
         fetch('http://0.0.0.0/api/v1/user/register/', req)
             .then(response => {
                 if (response.status === 201) {
-                    this.setState({redirectToReferrer: true})
+                    this.setState({
+                        redirectToReferrer: true,
+                        username_error: '',
+                        password_error: '',
+                        email_error: ''
+                    })
                 } else {
                     response.json().then((data) => {
-                        if (data.email && data.password && data.username) {
-                            this.setState({
-                                username_error: data.username[0],
-                                password_error: data.password[0],
-                                email_error: data.email[0]
-                            })
-                        } else if (data.email && data.password) {
-                            this.setState({
-                                username_error: '',
-                                password_error: data.password[0],
-                                email_error: data.email[0]
-                            })
-                        } else if (data.email && data.username) {
-                            this.setState({
-                                username_error: data.username[0],
-                                password_error: '',
-                                email_error: data.email[0]
-                            })
-                        } else if (data.username && data.password) {
-                            this.setState({
-                                username_error: data.username[0],
-                                password_error: data.password[0],
-                                email_error: ''
-                            })
-                        } else if (data.username) {
-                            this.setState({
-                                username_error: data.username[0],
-                                password_error: '',
-                                email_error: ''
-                            })
-                        } else if (data.password) {
-                            this.setState({
-                                username_error: '',
-                                password_error: data.password[0],
-                                email_error: ''
-                            })
-                        } else if (data.email) {
-                            this.setState({
-                                username_error: '',
-                                password_error: '',
-                                email_error: data.email[0]
-                            })
-                        } else if (data.non_field_errors) {
-                            this.setState({
-                                non_field_errors: data.non_field_errors[0],
-                                username_error: '',
-                                password_error: '',
-                                email_error: ''
-                            })
-                        }
+                        this.setState({
+                            username_error: data.username && data.username[0],
+                            password_error: data.password && data.password[0],
+                            email_error: data.email && data.email[0]
+                        })
                     })
                 }
             })

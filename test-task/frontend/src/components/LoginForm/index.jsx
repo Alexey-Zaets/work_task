@@ -54,34 +54,20 @@ class LoginForm extends Component {
                     response.json().then(data => {
                         cookies.set('token', 'JWT ' + data.token, {path: '/'})
                         cookies.set('username', this.state.username, {path: '/'})
-                        this.setState({redirectToReferrer: true})
+                        this.setState({
+                            redirectToReferrer: true,
+                            password_error: '',
+                            username_error: '',
+                            non_field_errors: ''
+                        })
                     })
                 } else {
                     response.json().then(data => {
-                        if (data.password && data.username) {
-                            this.setState({
-                                password_error: data.password[0],
-                                username_error: data.username[0],
-                                non_field_errors: ''
-                            })
-                        } else if (data.username) {
-                            this.setState({
-                                username_error: data.username[0],
-                                password_error: '',
-                                non_field_errors: ''
-                            })
-                        } else if (data.password) {
-                            this.setState({
-                                username_error: '',
-                                non_field_errors: '',
-                                password_error: data.password[0]
-                            })
-                        } else if (data.non_field_errors) {
-                            this.setState({
-                                username_error: '',
-                                password_error: '',
-                                non_field_errors: data.non_field_errors[0]})
-                        }
+                        this.setState({
+                            password_error: data.password && data.password[0],
+                            username_error: data.username && data.username[0],
+                            non_field_errors: data.non_field_errors && data.non_field_errors[0]
+                        })
                     })
                 }
             })
