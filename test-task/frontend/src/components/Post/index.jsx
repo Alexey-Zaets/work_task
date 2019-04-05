@@ -18,6 +18,42 @@ class ReplyForm extends Component {
         this.setState({comment: value, comment_error: ''})
     }
 
+    addReply = (id, comments) => {
+
+        const headers = new Headers({
+            "Content-Type": "application/json",
+            "Authorization": cookies.get('token')
+        })
+
+        const patchReq = {
+            method: 'PATCH',
+            headers: headers,
+            body: JSON.stringify({
+                post: this.props.post,
+                comments: comments.push(id),
+                level: this.props.level + 1,
+                author: cookies.get('username'),
+                comment: this.state.comment
+            })
+        }
+
+        fetch(`http://0.0.0.0/api/v1/comment/${this.props.parent}/`, patchReq)
+            .then(response => {
+                if (response.status === 200) {
+                    this.setState({
+                        comment: ''
+                    })
+                    alert('Reply was added')
+                } else {
+                    response.json().then((json) => {
+                        this.setState({
+                            comment_error: json.comment[0]
+                        })
+                    })
+                }
+            })
+    }
+
     handleClick = (e) => {
         e.preventDefault();
 
@@ -40,50 +76,19 @@ class ReplyForm extends Component {
         fetch(`http://0.0.0.0/api/v1/comment/`, postReq)
             .then(response => {
                 if (response.status === 201) {
-                    this.setState({
-                        comment: '',
+                    response.json().then((json) => {
+                        this.addReply(json.id, json.comments)
                     })
-                    alert('Comment was added')
                 } else {
                     response.json().then((json) => {
-                        this.setState({
-                            comment_error: json.comment[0]
-                        })
-                    })
-                }
-            })
-
-        const patchReq = {
-            method: 'PATCH',
-            headers: headers,
-            mode: 'cors',
-            body: JSON.stringify({
-                post: this.props.post,
-                comments: [],
-                level: this.props.level + 1,
-                author: cookies.get('username'),
-                comment: this.state.comment
-            })
-        }
-
-        fetch(`http://0.0.0.0/api/v1/comment/${this.props.parent}/`, patchReq)
-            .then(response => {
-                if (response.status === 201) {
-                    this.setState({
-                        comment: ''
-                    })
-                    alert('Reply was added')
-                } else {
-                    response.json().then((json) => {
-                        this.setState({
-                            comment_error: json.comment[0]
-                        })
+                        console.log(json)
                     })
                 }
             })
     }
 
     render() {
+        const comment_error_alert = this.state.comment_error && <div className="alert alert-danger" role="alert">{this.state.comment_error}</div>
 
         return (
             <form>
@@ -93,6 +98,7 @@ class ReplyForm extends Component {
                         <textarea onChange={this.handleComment} value={this.state.comment} className="textarea form-control" name="comment" cols="40" rows="5" required=""></textarea>
                     </div>
                 </div>
+                {comment_error_alert}
                 <button onClick={this.handleClick} className="btn btn-lg btn-primary btn-block mb-5">Reply</button>
             </form>
         )
@@ -176,7 +182,6 @@ class Post extends Component {
                     type: "POST_DETAIL",
                     post: data,
                     tags: data.tags,
-                    comment_error: ''
                 })
             })
     }
@@ -219,7 +224,6 @@ class Post extends Component {
 
     componentDidUpdate(prevState) {
         if (this.state !== prevState) {
-            console.log('update')
         }
     }
 
