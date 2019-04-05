@@ -3,17 +3,25 @@ import {Redirect} from 'react-router-dom'
 
 
 class RegisteForm extends Component {
-    state = {
-        username: '',
-        email: '',
-        password: '',
-        redirectToReferrer: false,
-        username_error: '',
-        email_error: '',
-        password_error: '',
-        non_field_errors: ''
-    }
+    constructor(props) {
+        super(props)
 
+        this.state = {
+            username: '',
+            email: '',
+            password: '',
+            redirectToReferrer: false,
+            username_error: '',
+            email_error: '',
+            password_error: '',
+            non_field_errors: ''
+        }
+
+        this.handleUsernameChange = this.handleUsernameChange.bind(this)
+        this.handlePasswordChange = this.handlePasswordChange.bind(this)
+        this.handleEmailChange = this.handleEmailChange.bind(this)
+        this.handleClickSignin = this.handleClickSignin.bind(this)
+    }
 
     handleUsernameChange = ({target: {value}}) => {
         this.setState({

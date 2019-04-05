@@ -127,18 +127,18 @@ class CommentViewSet(viewsets.ModelViewSet):
         Overrides the default method, creates a comment object with
         current user author
         '''
+        author = request.data.get('author')
+        author = User.objects.get(username=author) if author else None
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(
-            author=request.user if isinstance(request.user, User) else None
-        )
+        serializer.save(author=author)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get_permissions(self):
         '''
         Set permissions for users
         '''
-        if self.action in ['list', 'retrieve', 'create', 'update']:
+        if self.action in ['list', 'retrieve', 'create', 'partial_update']:
             permission_classes = (AllowAny,)
         else:
             permission_classes = (IsAdminUser,)
