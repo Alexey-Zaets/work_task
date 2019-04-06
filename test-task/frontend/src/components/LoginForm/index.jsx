@@ -23,11 +23,11 @@ class LoginForm extends Component {
 
 
     handleUsernameChange = ({target: {value}}) => {
-        this.setState({username: value})
+        this.setState({username: value, password_error: ''})
     }
 
     handlePasswordChange = ({target: {value}}) => {
-        this.setState({password: value})
+        this.setState({password: value, password_error: ''})
     }
 
     handleClickSignin = (e) => {

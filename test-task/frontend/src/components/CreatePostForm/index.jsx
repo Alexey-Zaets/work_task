@@ -28,15 +28,11 @@ class CreatePostForm extends Component {
     }
 
     handleTitleChange = ({target: {value}}) => {
-        this.setState({
-            title: value
-        })
+        this.setState({title: value, title_error: ''})
     }
 
     handleContentChange = ({target: {value}}) => {
-        this.setState({
-            content: value
-        })
+        this.setState({content: value, content_error: ''})
     }
 
     handleSubmit = (e) => {
