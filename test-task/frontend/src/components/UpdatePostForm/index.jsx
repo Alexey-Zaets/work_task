@@ -16,9 +16,15 @@ class UpdatePostForm extends Component {
             categories: [],
             form_tags: [],
             content: '',
+
+            // current_category: '',
+            // current_tags: [],
+
             title_error: '',
             tags_error: '',
-            content_error: ''
+            content_error: '',
+
+            wasUpdated: false
         }
 
         this.handleTitleChange = this.handleTitleChange.bind(this)
@@ -72,9 +78,9 @@ class UpdatePostForm extends Component {
                         category: '',
                         title_error: '',
                         tags_error: '',
-                        content_error: ''
+                        content_error: '',
+                        wasUpdated: true
                     })
-                    alert('Post was updated')
                 } else {
                     response.json().then((json) => {
                         this.setState({
@@ -153,6 +159,10 @@ class UpdatePostForm extends Component {
 
         if (!store.getState().auth) return <Redirect to='/login'/>
 
+        const id = this.props.match.params.id
+
+        if (this.state.wasUpdated) return <Redirect to={`/post/${id}`}/>
+
         return (
             <div className="col-md-9">
                 <h1 className="text-center">Update post</h1>
@@ -170,13 +180,26 @@ class UpdatePostForm extends Component {
                                 <label className="col-form-label requiredField">
                                     Category
                                 </label>
-                                <Select ref={this.categoryRef} name="categories" options={categoriesList} className="basic-single" classNamePrefix="select"/>
+                                <Select
+                                    ref={this.categoryRef}
+                                    name="categories"
+                                    options={categoriesList}
+                                    className="basic-single"
+                                    classNamePrefix="select"
+                                />
                             </div>
                             <div className="form-group">
                                 <label className="col-form-label requiredField">
                                     Tags
                                 </label>
-                                <Select ref={this.tagsRef} isMulti name="tags" options={tagsList} className="basic-multi-select" classNamePrefix="select"/>
+                                <Select
+                                    ref={this.tagsRef}
+                                    isMulti
+                                    name="tags"
+                                    options={tagsList}
+                                    className="basic-multi-select"
+                                    classNamePrefix="select"
+                                />
                             </div>
                             {tags_error_alert}
                             <div className="form-group">
