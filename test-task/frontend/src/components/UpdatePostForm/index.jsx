@@ -4,7 +4,7 @@ import {store, cookies} from '../../index'
 import Select from 'react-select'
 
 
-class CreatePostForm extends Component {
+class UpdatePostForm extends Component {
     constructor(props) {
         super(props)
 
@@ -16,7 +16,7 @@ class CreatePostForm extends Component {
             categories: [],
             form_tags: [],
             content: '',
-            title_rrorr: '',
+            title_error: '',
             tags_error: '',
             content_error: ''
         }
@@ -44,13 +44,15 @@ class CreatePostForm extends Component {
             selected_tags.push(tag.value)
         })
 
+        const id = this.props.match.params.id || ''
+
         const headers = new Headers({
             "Content-Type": "application/json",
             "Authorization": cookies.get('token')
         })
 
         const req = {
-            method: 'POST',
+            method: 'PATCH',
             headers: headers,
             mode: 'cors',
             body: JSON.stringify({
@@ -58,23 +60,21 @@ class CreatePostForm extends Component {
                 tags: selected_tags,
                 category: selected_category,
                 content: this.state.content,
-                author: store.getState().username || cookies.get('username')
             })
         }
 
-        fetch('http://0.0.0.0/api/v1/post/', req)
+        fetch(`http://0.0.0.0/api/v1/post/${id}/`, req)
             .then(response => {
-                if (response.status === 201) {
+                if (response.status === 200) {
                     this.setState({
                         title: '',
                         content: '',
-                        selected_category: {},
-                        selected_tags: [],
+                        category: '',
                         title_error: '',
                         tags_error: '',
                         content_error: ''
                     })
-                    alert('Post was added')
+                    alert('Post was updated')
                 } else {
                     response.json().then((json) => {
                         this.setState({
@@ -94,6 +94,8 @@ class CreatePostForm extends Component {
             }
         })
 
+        const id = this.props.match.params.id || ''
+
         const headers = new Headers({
             "Content-Type": "application/json"
         })
@@ -103,6 +105,16 @@ class CreatePostForm extends Component {
             headers: headers,
             mode: 'cors'
         }
+
+        fetch(`http://0.0.0.0/api/v1/post/${id}`, req)
+            .then(response => {return response.json()})
+            .then(data => {
+                this.setState({
+                    title: data.title,
+                    category: data.category,
+                    content: data.content
+                })
+            })
 
         fetch(`http://0.0.0.0/api/v1/tag`, req)
             .then(response => {
@@ -143,7 +155,7 @@ class CreatePostForm extends Component {
 
         return (
             <div className="col-md-9">
-                <h1 className="text-center">Add new post</h1>
+                <h1 className="text-center">Update post</h1>
                 <form onSubmit={this.handleSubmit}>
                     <div className='row justify-content-center'>
                         <div className='col-9'>
@@ -158,13 +170,13 @@ class CreatePostForm extends Component {
                                 <label className="col-form-label requiredField">
                                     Category
                                 </label>
-                                <Select ref={this.categoryRef} defaultValue={[categoriesList[0]]} name="categories" options={categoriesList} className="basic-single" classNamePrefix="select"/>
+                                <Select ref={this.categoryRef} name="categories" options={categoriesList} className="basic-single" classNamePrefix="select"/>
                             </div>
                             <div className="form-group">
                                 <label className="col-form-label requiredField">
                                     Tags
                                 </label>
-                                <Select ref={this.tagsRef} defaultValue={[tagsList[0]]} isMulti name="tags" options={tagsList} className="basic-multi-select" classNamePrefix="select"/>
+                                <Select ref={this.tagsRef} isMulti name="tags" options={tagsList} className="basic-multi-select" classNamePrefix="select"/>
                             </div>
                             {tags_error_alert}
                             <div className="form-group">
@@ -174,7 +186,7 @@ class CreatePostForm extends Component {
                                 <textarea className="textarea form-control" type="text" name="content" value={content} onChange={this.handleContentChange} cols="40" rows="10"/>
                             </div>
                             {content_error_alert}
-                            <button className="btn btn-lg btn-primary btn-block" type="submit">Add</button>
+                            <button className="btn btn-lg btn-primary btn-block" type="submit">Update</button>
                         </div>
                     </div>
                 </form>
@@ -183,4 +195,4 @@ class CreatePostForm extends Component {
     }
 }
 
-export default CreatePostForm
+export default UpdatePostForm

@@ -185,7 +185,6 @@ class Post extends Component {
         fetch(`http://0.0.0.0/api/v1/post/${id}`, req)
             .then(response => {return response.json()})
             .then(data => {
-                console.log(data.comment_set)
                 store.dispatch({
                     type: "POST_DETAIL",
                     post: data,
@@ -247,7 +246,7 @@ class Post extends Component {
         const comment_error_alert = this.state.comment_error && <div className="alert alert-danger" role="alert">{this.state.comment_error}</div>
 
         return (
-            <div className="col-md-9">
+            <div className="col-md-9" key={post.id}>
                 <h1 className="text-center">{post.title}</h1>
                 {tags.map((tag) => {
                     return (
@@ -255,7 +254,7 @@ class Post extends Component {
                     )
                 })}
                 <p className="text-justify text-monospace mt-3 border-bottom">{post.content}</p>
-                {auth && <button className="btn btn-primary btn-lg btn-block" onClick={this.onClickUpdate}>Update post</button>}
+                {auth && <Link to={`/update/${post.id}`} className="btn btn-primary btn-lg btn-block">Update post</Link>}
                 <h3 className="mt-3">Comments</h3>
                 {comments.map((comment) => {
                     return (
