@@ -359,7 +359,7 @@ class CommentTest(CustomAPITestCase):
         self.login_admin_and_set_credentials()
         url = reverse('comment_list')
         post = Post.objects.get(title='First post')
-        data = {'post': post.id, 'comment': 'First comment'}
+        data = {'post': post.id, 'comment': 'First comment', 'author': ADMIN_NAME}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
@@ -452,7 +452,7 @@ class PostTest(CustomAPITestCase):
             'category': category.id,
             'tags': [tag.id,],
             'content': 'New test content',
-            'author': user.id
+            'author': user.username
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

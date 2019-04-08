@@ -128,10 +128,11 @@ class CommentViewSet(viewsets.ModelViewSet):
         current user author
         '''
         author = request.data.get('author')
-        author = User.objects.get(username=author) if author else None
+        author = User.objects.get(username=author).id if author else None
+        request.data['author'] = author
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(author=author)
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get_permissions(self):

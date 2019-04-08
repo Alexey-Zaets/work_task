@@ -29,10 +29,8 @@ class ReplyForm extends Component {
             method: 'PATCH',
             headers: headers,
             body: JSON.stringify({
-                post: this.props.post,
-                comments: comments.push(id),
+                comments: comments,
                 level: this.props.level + 1,
-                author: cookies.get('username'),
                 comment: this.state.comment
             })
         }
@@ -40,10 +38,16 @@ class ReplyForm extends Component {
         fetch(`http://0.0.0.0/api/v1/comment/${this.props.parent}/`, patchReq)
             .then(response => {
                 if (response.status === 200) {
-                    this.setState({
-                        comment: ''
-                    })
+                    response.json().then(data => {
+                        const comments = store.getState().comments
+                        comments.push(data)
+                        this.setState({comment: ''})
+                        store.dispatch({
+                            type: "ADD_REPLY",
+                            comments: comments
+                        })
                     alert('Reply was added')
+                    })
                 } else {
                     response.json().then((json) => {
                         this.setState({
@@ -81,7 +85,9 @@ class ReplyForm extends Component {
                     })
                 } else {
                     response.json().then((json) => {
-                        console.log(json)
+                        this.setState({
+                            comment_error: json.comment[0]
+                        })
                     })
                 }
             })
@@ -93,7 +99,7 @@ class ReplyForm extends Component {
         return (
             <form>
                 <div className="form-group">
-                    <label className="col-form-label requiredField">Comment</label>
+                    <label className="col-form-label requiredField">Reply</label>
                     <div>
                         <textarea onChange={this.handleComment} value={this.state.comment} className="textarea form-control" name="comment" cols="40" rows="5" required=""></textarea>
                     </div>
@@ -149,6 +155,7 @@ class Post extends Component {
         this.state = {
             post: {},
             tags: [],
+            comments: [],
             comment: '',
         }
 
@@ -178,10 +185,12 @@ class Post extends Component {
         fetch(`http://0.0.0.0/api/v1/post/${id}`, req)
             .then(response => {return response.json()})
             .then(data => {
+                console.log(data.comment_set)
                 store.dispatch({
                     type: "POST_DETAIL",
                     post: data,
                     tags: data.tags,
+                    comments: data.comment_set.reverse()
                 })
             })
     }
@@ -208,23 +217,24 @@ class Post extends Component {
         fetch(`http://0.0.0.0/api/v1/comment/`, req)
             .then(response => {
                 if (response.status === 201) {
-                    this.setState({
-                        comment: '',
-                    })
                     alert('Comment was added')
-                } else {
-                    response.json().then((json) => {
-                        this.setState({
-                            comment_error: json.comment[0]
+                    response.json().then(data => {
+                        const comments = store.getState().comments
+                        comments.push(data)
+                        this.setState({comment: ''})
+                        store.dispatch({
+                            type: "POST_DETAIL",
+                            post: this.state.post,
+                            tags: this.state.tags,
+                            comments: comments
                         })
+                    })
+                } else {
+                    response.json().then(data => {
+                        this.setState({comment_error: data.comment[0]})
                     })
                 }
             })
-    }
-
-    componentDidUpdate(prevState) {
-        if (this.state !== prevState) {
-        }
     }
 
     handleCommentChange = ({target: {value}}) => {
@@ -232,9 +242,8 @@ class Post extends Component {
     }
 
     render() {
-        const {post, tags} = this.state
+        const {post, tags, comments} = this.state
         const {auth} = store.getState()
-        const comments = post.comment_set ? post.comment_set : []
         const comment_error_alert = this.state.comment_error && <div className="alert alert-danger" role="alert">{this.state.comment_error}</div>
 
         return (
