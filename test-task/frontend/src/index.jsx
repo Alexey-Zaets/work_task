@@ -11,6 +11,7 @@ import {createStore} from 'redux'
 import rootReducer from './store/reducers'
 import Sidebar from './components/Sidebar'
 import CreatePostForm from './components/CreatePostForm'
+import UpdatePostForm from './components/UpdatePostForm'
 import Cookies from 'universal-cookie'
 
 
@@ -40,6 +41,10 @@ render((
                     </Route>
                     <Route path='/post/:id'>
                         <Route component={Post}/>
+                        <Route component={Sidebar}/>
+                    </Route>
+                    <Route path='/update/:id'>
+                        <Route component={UpdatePostForm}/>
                         <Route component={Sidebar}/>
                     </Route>
                     <Route path='/login' component={LoginForm}/>

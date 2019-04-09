@@ -29,10 +29,8 @@ class ReplyForm extends Component {
             method: 'PATCH',
             headers: headers,
             body: JSON.stringify({
-                post: this.props.post,
-                comments: comments.push(id),
+                comments: comments,
                 level: this.props.level + 1,
-                author: cookies.get('username'),
                 comment: this.state.comment
             })
         }
@@ -40,10 +38,16 @@ class ReplyForm extends Component {
         fetch(`http://0.0.0.0/api/v1/comment/${this.props.parent}/`, patchReq)
             .then(response => {
                 if (response.status === 200) {
-                    this.setState({
-                        comment: ''
-                    })
+                    response.json().then(data => {
+                        const comments = store.getState().comments
+                        comments.push(data)
+                        this.setState({comment: ''})
+                        store.dispatch({
+                            type: "ADD_REPLY",
+                            comments: comments
+                        })
                     alert('Reply was added')
+                    })
                 } else {
                     response.json().then((json) => {
                         this.setState({
@@ -81,7 +85,9 @@ class ReplyForm extends Component {
                     })
                 } else {
                     response.json().then((json) => {
-                        console.log(json)
+                        this.setState({
+                            comment_error: json.comment[0]
+                        })
                     })
                 }
             })
@@ -93,7 +99,7 @@ class ReplyForm extends Component {
         return (
             <form>
                 <div className="form-group">
-                    <label className="col-form-label requiredField">Comment</label>
+                    <label className="col-form-label requiredField">Reply</label>
                     <div>
                         <textarea onChange={this.handleComment} value={this.state.comment} className="textarea form-control" name="comment" cols="40" rows="5" required=""></textarea>
                     </div>
@@ -109,31 +115,34 @@ class Comment extends Component {
     constructor(props) {
         super(props)
 
-        this.state = {
-            reply: false
-        }
-
+        this.state = {reply: false}
         this.handleReply = this.handleReply.bind(this)
     }
 
     handleReply = (e) => {
         e.preventDefault();
-        this.setState({
-            reply: !this.state.reply
-        })
+        this.setState({reply: !this.state.reply})
     }
 
     render() {
+        const comment = {
+            author: this.props.author,
+            text: this.props.text,
+            level: this.props.level,
+            post: this.props.post,
+            parent: this.props.parent,
+            children: this.props.children
+        }
 
         return (
-            <ul className="list-group list-group-flush" key={this.props.index}>
+            <ul className="list-group list-group-flush" key={comment.parent}>
                 <li className="list-group-item">
                     <div className="media position-relative border-bottom mt-2">
                         <div className="media-body">
-                            <h5 className="mt-0">{this.props.author}</h5>
-                            <p>{this.props.text}</p>
-                            {this.props.level < 2 && <button onClick={this.handleReply} className="btn btn-primary btn-sm">{this.state.reply ? 'Close' : 'Reply'}</button>}
-                            {this.state.reply && <ReplyForm post={this.props.post} parent={this.props.parent} level={this.props.level}/>}
+                            <h5 className="mt-0">{comment.author}</h5>
+                            <p>{comment.text}</p>
+                            {comment.level < 2 && <button onClick={this.handleReply} className="btn btn-primary btn-sm">{this.state.reply ? 'Close' : 'Reply'}</button>}
+                            {this.state.reply && <ReplyForm post={comment.post} parent={comment.parent} level={comment.level}/>}
                         </div>
                     </div>
                 </li>
@@ -148,7 +157,9 @@ class Post extends Component {
 
         this.state = {
             post: {},
+            author: '',
             tags: [],
+            comments: [],
             comment: '',
         }
 
@@ -181,7 +192,9 @@ class Post extends Component {
                 store.dispatch({
                     type: "POST_DETAIL",
                     post: data,
+                    author: data.author.username,
                     tags: data.tags,
+                    comments: data.comment_set //.reverse()
                 })
             })
     }
@@ -208,23 +221,24 @@ class Post extends Component {
         fetch(`http://0.0.0.0/api/v1/comment/`, req)
             .then(response => {
                 if (response.status === 201) {
-                    this.setState({
-                        comment: '',
-                    })
                     alert('Comment was added')
-                } else {
-                    response.json().then((json) => {
-                        this.setState({
-                            comment_error: json.comment[0]
+                    response.json().then(data => {
+                        const comments = store.getState().comments
+                        comments.push(data)
+                        this.setState({comment: ''})
+                        store.dispatch({
+                            type: "POST_DETAIL",
+                            post: this.state.post,
+                            tags: this.state.tags,
+                            comments: comments
                         })
+                    })
+                } else {
+                    response.json().then(data => {
+                        this.setState({comment_error: data.comment[0]})
                     })
                 }
             })
-    }
-
-    componentDidUpdate(prevState) {
-        if (this.state !== prevState) {
-        }
     }
 
     handleCommentChange = ({target: {value}}) => {
@@ -232,13 +246,12 @@ class Post extends Component {
     }
 
     render() {
-        const {post, tags} = this.state
-        const {auth} = store.getState()
-        const comments = post.comment_set ? post.comment_set : []
+        const {post, tags, comments, author} = this.state
+        const {username} = store.getState()
         const comment_error_alert = this.state.comment_error && <div className="alert alert-danger" role="alert">{this.state.comment_error}</div>
 
         return (
-            <div className="col-md-9">
+            <div className="col-md-9" key={post.id}>
                 <h1 className="text-center">{post.title}</h1>
                 {tags.map((tag) => {
                     return (
@@ -246,11 +259,11 @@ class Post extends Component {
                     )
                 })}
                 <p className="text-justify text-monospace mt-3 border-bottom">{post.content}</p>
-                {auth && <button className="btn btn-primary btn-lg btn-block" onClick={this.onClickUpdate}>Update post</button>}
+                {username === author && <Link to={`/update/${post.id}`} className="btn btn-primary btn-lg btn-block">Update post</Link>}
                 <h3 className="mt-3">Comments</h3>
                 {comments.map((comment) => {
                     return (
-                        <Comment key={comment.id} post={post.id} parent={comment.id} author={comment.author ? comment.author.username : 'Anonymous'} text={comment.comment} level={comment.level}/>
+                        <Comment key={comment.id} children={comment.comments} post={post.id} parent={comment.id} author={comment.author ? comment.author.username : 'Anonymous'} text={comment.comment} level={comment.level}/>
                     )
                 })}
                 <h3 className="mt-3">Add new comment</h3>
