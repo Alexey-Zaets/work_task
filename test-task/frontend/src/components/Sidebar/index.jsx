@@ -47,9 +47,8 @@ class CategoryList extends Component {
     constructor(props) {
         super(props)
 
-        this.state = {
-            categoriesList: [],
-        }
+        this.state = {categoriesList: []}
+        this.getChildren = this.getChildren.bind(this)
     }
 
     componentDidMount() {
@@ -63,6 +62,7 @@ class CategoryList extends Component {
             headers: headers,
             mode: 'cors'
         }
+
         fetch('http://0.0.0.0/api/v1/category/', req)
             .then(response => response.json())
             .then(data => {
@@ -72,25 +72,45 @@ class CategoryList extends Component {
             })
     }
 
+    getChildren(children) {
+        children.forEach(function(item, i, arr) {
+            const xhr = new XMLHttpRequest()
+            xhr.open('GET', `http://0.0.0.0/api/v1/category/${item}`, true)
+            xhr.send();
+            let category = {}
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    category = JSON.parse(xhr.responseText)
+                }
+            }
+            return (
+                <ul className="border-bottom">
+                    <li className="category-list__li" key={category.id}>
+                        <Link to={{pathname: '/', search: `category__title=${category.title}`}} key={category.id}>{category.title}</Link>
+                    </li>
+                </ul>
+            )
+        })
+    }
+
     render() {
+        const rootCategories = []
+
+        this.state.categoriesList.map((category) => {
+            category.parent == null && rootCategories.push(category)
+        })
+
         return (
             <div>
                 <h3>Categories</h3>
                 <ul className="border-bottom">
-                    {this.state.categoriesList.map((category) => {
-                        if (!category.children.length) {
-                            return (
-                                <li className="category-list__li" key={category.id}>
-                                    <Link to={{pathname: '/', search: `category__title=${category.title}`}} key={category.id}>{category.title}</Link>
-                                </li>
-                            )
-                        } else {
-                            return (
-                                <ul className="children" key={category.id}>
-                                    <Link to={{pathname: '/', search: `category__title=${category.title}`}} key={category.id}>{category.title}</Link>
-                                </ul>
-                            )
-                        }
+                    {rootCategories.map((category) => {
+                        return (
+                            <li className="category-list__li" key={category.id}>
+                                <Link to={{pathname: '/', search: `category__title=${category.title}`}} key={category.id}>{category.title}</Link>
+                                {this.getChildren(category.children)}
+                            </li>
+                        )
                     })}
                 </ul>
             </div>

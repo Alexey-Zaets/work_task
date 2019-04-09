@@ -14,11 +14,11 @@ class UpdatePostForm extends Component {
         this.state = {
             title: '',
             categories: [],
-            form_tags: [],
+            tags: [],
             content: '',
 
-            // current_category: '',
-            // current_tags: [],
+            currentCategory: {},
+            currentTags: [],
 
             title_error: '',
             tags_error: '',
@@ -43,8 +43,9 @@ class UpdatePostForm extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
+
         const selected_tags = []
-        const selected_category = this.categoryRef.current.state.value.value
+        const selected_category = this.categoryRef.current.props.value.value
 
         this.tagsRef.current.state.value.map((tag) => {
             selected_tags.push(tag.value)
@@ -75,7 +76,7 @@ class UpdatePostForm extends Component {
                     this.setState({
                         title: '',
                         content: '',
-                        category: '',
+                        currentCategory: {},
                         title_error: '',
                         tags_error: '',
                         content_error: '',
@@ -94,6 +95,7 @@ class UpdatePostForm extends Component {
     }
 
     componentDidMount() {
+
         store.subscribe(() => {
             if (this.state !== store.getState()) {
                 this.setState(store.getState())
@@ -115,10 +117,15 @@ class UpdatePostForm extends Component {
         fetch(`http://0.0.0.0/api/v1/post/${id}`, req)
             .then(response => {return response.json()})
             .then(data => {
+                const currentTags = []
+                data.tags.map((tag) => {
+                    currentTags.push({value: tag.id, label: tag.title})
+                })
                 this.setState({
                     title: data.title,
-                    category: data.category,
-                    content: data.content
+                    currentCategory: {label: data.category.title, value: data.category.id},
+                    currentTags: currentTags,
+                    content: data.content,
                 })
             })
 
@@ -127,7 +134,7 @@ class UpdatePostForm extends Component {
                 return response.json()
             })
             .then(data => {
-                this.setState({form_tags: data.results})
+                this.setState({tags: data.results})
             })
 
         fetch(`http://0.0.0.0/api/v1/category`, req)
@@ -140,12 +147,12 @@ class UpdatePostForm extends Component {
     }
 
     render() {
-        const {title, content, form_tags, categories, title_error, tags_error, content_error} = this.state;
-
+        const {title, content, tags, categories, currentCategory, currentTags, title_error, tags_error, content_error} = this.state;
+        const id = this.props.match.params.id
         const tagsList = []
         const categoriesList = []
 
-        form_tags.map((tag) => {
+        tags.map((tag) => {
             tagsList.push({value: tag.id, label: tag.title})
         })
 
@@ -158,9 +165,6 @@ class UpdatePostForm extends Component {
         const content_error_alert = content_error && <div className="alert alert-danger" role="alert">{content_error}</div>
 
         if (!store.getState().auth) return <Redirect to='/login'/>
-
-        const id = this.props.match.params.id
-
         if (this.state.wasUpdated) return <Redirect to={`/post/${id}`}/>
 
         return (
@@ -184,6 +188,8 @@ class UpdatePostForm extends Component {
                                     ref={this.categoryRef}
                                     name="categories"
                                     options={categoriesList}
+                                    value={currentCategory}
+                                    onChange={value => this.setState({currentCategory: value})}
                                     className="basic-single"
                                     classNamePrefix="select"
                                 />
@@ -197,6 +203,8 @@ class UpdatePostForm extends Component {
                                     isMulti
                                     name="tags"
                                     options={tagsList}
+                                    value={currentTags}
+                                    onChange={value => this.setState({currentTags: value})}
                                     className="basic-multi-select"
                                     classNamePrefix="select"
                                 />

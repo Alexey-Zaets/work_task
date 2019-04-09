@@ -115,31 +115,34 @@ class Comment extends Component {
     constructor(props) {
         super(props)
 
-        this.state = {
-            reply: false
-        }
-
+        this.state = {reply: false}
         this.handleReply = this.handleReply.bind(this)
     }
 
     handleReply = (e) => {
         e.preventDefault();
-        this.setState({
-            reply: !this.state.reply
-        })
+        this.setState({reply: !this.state.reply})
     }
 
     render() {
+        const comment = {
+            author: this.props.author,
+            text: this.props.text,
+            level: this.props.level,
+            post: this.props.post,
+            parent: this.props.parent,
+            children: this.props.children
+        }
 
         return (
-            <ul className="list-group list-group-flush" key={this.props.index}>
+            <ul className="list-group list-group-flush" key={comment.parent}>
                 <li className="list-group-item">
                     <div className="media position-relative border-bottom mt-2">
                         <div className="media-body">
-                            <h5 className="mt-0">{this.props.author}</h5>
-                            <p>{this.props.text}</p>
-                            {this.props.level < 2 && <button onClick={this.handleReply} className="btn btn-primary btn-sm">{this.state.reply ? 'Close' : 'Reply'}</button>}
-                            {this.state.reply && <ReplyForm post={this.props.post} parent={this.props.parent} level={this.props.level}/>}
+                            <h5 className="mt-0">{comment.author}</h5>
+                            <p>{comment.text}</p>
+                            {comment.level < 2 && <button onClick={this.handleReply} className="btn btn-primary btn-sm">{this.state.reply ? 'Close' : 'Reply'}</button>}
+                            {this.state.reply && <ReplyForm post={comment.post} parent={comment.parent} level={comment.level}/>}
                         </div>
                     </div>
                 </li>
@@ -154,6 +157,7 @@ class Post extends Component {
 
         this.state = {
             post: {},
+            author: '',
             tags: [],
             comments: [],
             comment: '',
@@ -188,8 +192,9 @@ class Post extends Component {
                 store.dispatch({
                     type: "POST_DETAIL",
                     post: data,
+                    author: data.author.username,
                     tags: data.tags,
-                    comments: data.comment_set.reverse()
+                    comments: data.comment_set //.reverse()
                 })
             })
     }
@@ -241,8 +246,8 @@ class Post extends Component {
     }
 
     render() {
-        const {post, tags, comments} = this.state
-        const {auth} = store.getState()
+        const {post, tags, comments, author} = this.state
+        const {username} = store.getState()
         const comment_error_alert = this.state.comment_error && <div className="alert alert-danger" role="alert">{this.state.comment_error}</div>
 
         return (
@@ -254,11 +259,11 @@ class Post extends Component {
                     )
                 })}
                 <p className="text-justify text-monospace mt-3 border-bottom">{post.content}</p>
-                {auth && <Link to={`/update/${post.id}`} className="btn btn-primary btn-lg btn-block">Update post</Link>}
+                {username === author && <Link to={`/update/${post.id}`} className="btn btn-primary btn-lg btn-block">Update post</Link>}
                 <h3 className="mt-3">Comments</h3>
                 {comments.map((comment) => {
                     return (
-                        <Comment key={comment.id} post={post.id} parent={comment.id} author={comment.author ? comment.author.username : 'Anonymous'} text={comment.comment} level={comment.level}/>
+                        <Comment key={comment.id} children={comment.comments} post={post.id} parent={comment.id} author={comment.author ? comment.author.username : 'Anonymous'} text={comment.comment} level={comment.level}/>
                     )
                 })}
                 <h3 className="mt-3">Add new comment</h3>
