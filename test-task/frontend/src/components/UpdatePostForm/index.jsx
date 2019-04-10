@@ -8,9 +8,6 @@ class UpdatePostForm extends Component {
     constructor(props) {
         super(props)
 
-        this.categoryRef = React.createRef();
-        this.tagsRef = React.createRef();
-
         this.state = {
             title: '',
             categories: [],
@@ -45,9 +42,8 @@ class UpdatePostForm extends Component {
         e.preventDefault();
 
         const selected_tags = []
-        const selected_category = this.categoryRef.current.props.value.value
 
-        this.tagsRef.current.state.value.map((tag) => {
+        this.state.currentTags.map((tag) => {
             selected_tags.push(tag.value)
         })
 
@@ -65,7 +61,7 @@ class UpdatePostForm extends Component {
             body: JSON.stringify({
                 title: this.state.title,
                 tags: selected_tags,
-                category: selected_category,
+                category: this.state.currentCategory.value,
                 content: this.state.content,
             })
         }
@@ -185,7 +181,6 @@ class UpdatePostForm extends Component {
                                     Category
                                 </label>
                                 <Select
-                                    ref={this.categoryRef}
                                     name="categories"
                                     options={categoriesList}
                                     value={currentCategory}
@@ -199,7 +194,6 @@ class UpdatePostForm extends Component {
                                     Tags
                                 </label>
                                 <Select
-                                    ref={this.tagsRef}
                                     isMulti
                                     name="tags"
                                     options={tagsList}

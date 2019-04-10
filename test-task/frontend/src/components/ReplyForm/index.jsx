@@ -1,0 +1,114 @@
+import React, {Component} from 'react'
+import fetch from 'isomorphic-fetch'
+import {store, cookies} from '../../index'
+
+
+class ReplyForm extends Component {
+    constructor(props) {
+        super(props)
+
+        this.state = {comment: '', comment_error: ''}
+
+        this.handleClick = this.handleClick.bind(this)
+        this.handleComment = this.handleComment.bind(this)
+    }
+
+    handleComment = ({target: {value}}) => {
+        this.setState({comment: value, comment_error: ''})
+    }
+
+    addReply = (id) => {
+
+        const headers = new Headers({
+            "Content-Type": "application/json",
+            "Authorization": cookies.get('token')
+        })
+
+        const comments = store.getState().comments
+        comments.push(id)
+
+        const patchReq = {
+            method: 'PATCH',
+            headers: headers,
+            body: JSON.stringify({
+                post: this.props.postID,
+                comments: comments,
+                level: this.props.level + 1,
+                comment: this.state.comment
+            })
+        }
+
+        fetch(`http://0.0.0.0/api/v1/comment/${this.props.commentID}/`, patchReq)
+            .then(response => {
+                if (response.status === 200) {
+                    response.json().then(data => {
+                        store.dispatch({
+                            type: "ADD_REPLY",
+                            comments: comments
+                        })
+                    alert('Reply was added')
+                    })
+                } else {
+                    response.json().then((json) => {
+                        this.setState({
+                            comment_error: json.comment[0]
+                        })
+                    })
+                }
+            })
+    }
+
+    handleClick = (e) => {
+        e.preventDefault();
+
+        const headers = new Headers({
+            "Content-Type": "application/json",
+            "Authorization": cookies.get('token')
+        })
+
+        const postReq = {
+            method: 'POST',
+            headers: headers,
+            mode: 'cors',
+            body: JSON.stringify({
+                post: this.props.postID,
+                author: cookies.get('username'),
+                comment: this.state.comment,
+            })
+        }
+
+        fetch(`http://0.0.0.0/api/v1/comment/`, postReq)
+            .then(response => {
+                if (response.status === 201) {
+                    response.json().then((json) => {
+                        this.addReply(json.id)
+                    })
+                } else {
+                    response.json().then((json) => {
+                        this.setState({
+                            comment_error: json.comment[0]
+                        })
+                    })
+                }
+            })
+    }
+
+    render() {
+        const comment_error_alert = this.state.comment_error && <div className="alert alert-danger" role="alert">{this.state.comment_error}</div>
+
+        return (
+            <form>
+                <div className="form-group">
+                    <label className="col-form-label requiredField">Reply</label>
+                    <div>
+                        <textarea onChange={this.handleComment} value={this.state.comment} className="textarea form-control" name="comment" cols="40" rows="5" required=""></textarea>
+                    </div>
+                </div>
+                {comment_error_alert}
+                <button onClick={this.handleClick} className="btn btn-lg btn-primary btn-block mb-5">Reply</button>
+            </form>
+        )
+    }
+}
+
+export default ReplyForm

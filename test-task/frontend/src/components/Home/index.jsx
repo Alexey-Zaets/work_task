@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
 import {Link, Redirect} from 'react-router-dom'
 import {store} from '../../index'
+import Pagination from '../Pagination'
 
 
 class Home extends Component {
@@ -9,7 +10,10 @@ class Home extends Component {
         super(props)
 
         this.state = {
-            postsList: []
+            count: '',
+            nextPage: '',
+            prevPage: '',
+            postsList: [],
         }
     }
 
@@ -34,7 +38,13 @@ class Home extends Component {
         fetch('http://0.0.0.0/api/v1/post/' + this.props.location.search, req)
             .then(response => response.json())
             .then(data => {
-                store.dispatch({type: "POST_LIST", postsList: data.results})
+                store.dispatch({
+                    type: "POST_LIST",
+                    postsList: data.results,
+                    count: data.count,
+                    nextPage: data.next,
+                    prevPage: data.previous
+                })
             })
     }
 
@@ -55,7 +65,13 @@ class Home extends Component {
             fetch('http://0.0.0.0/api/v1/post/' + this.props.location.search, req)
                 .then(response => response.json())
                 .then(data => {
-                    store.dispatch({type: "POST_LIST", postsList: data.results})
+                    store.dispatch({
+                        type: "POST_LIST",
+                        postsList: data.results,
+                        count: data.count,
+                        nextPage: data.next,
+                        prevPage: data.previous
+                    })
                 })
         }
     }
@@ -71,6 +87,7 @@ class Home extends Component {
                             <h3 key={post.id}><Link to={`/post/${post.id}`}>{post.title}</Link></h3>
                         )
                     })}
+                    <Pagination next={this.state.nextPage} previous={this.state.prevPage}/>
                 </div>
             )
         }

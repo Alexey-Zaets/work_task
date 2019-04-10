@@ -82,7 +82,7 @@ class Comment(models.Model):
     )
     level = models.IntegerField(default=0)
     comments = models.ManyToManyField(
-        'self', related_name='parent+', symmetrical=False, blank=True
+        'self', related_name='parent', symmetrical=False, blank=True
     )
     comment = models.TextField()
     pub_date = models.DateTimeField(auto_now_add=True)
