@@ -25,18 +25,24 @@ class Post extends Component {
     renderComment(comment) {
         const id = this.props.match.params.id || ''
         return (
-            <div key={comment.id}>
-                <Comment
-                    key={comment.id}
-                    children={comment.comments}
-                    post={id}
-                    parent={comment.id}
-                    author={comment.author ? comment.author.username : 'Anonymous'}
-                    text={comment.comment}
-                    level={comment.level}
-                />
-                {(comment.comments && comment.comments.length) ? <ul>{comment.comments.map(this.renderComment)}</ul> : ''}
-            </div>
+            <ul className="list-group list-group-flush" key={comment.id}>
+                <li className="list-group-item">
+                    <div className="media position-relative border-bottom mt-2">
+                        <div className="media-body">
+                            <Comment
+                                key={comment.id}
+                                children={comment.comments}
+                                post={id}
+                                parent={comment.id}
+                                author={comment.author ? comment.author.username : 'Anonymous'}
+                                text={comment.comment}
+                                level={comment.level}
+                            />
+                        </div>
+                    </div>
+                </li>
+                {(comment.comments && comment.comments.length) ? <li className="list-group-item">{comment.comments.map(this.renderComment)}</li> : ''}
+            </ul>
         )
     }
 
@@ -122,7 +128,7 @@ class Post extends Component {
 
     render() {
         let items = this.state.comments
-        items.forEach(e => e.subComments = items.filter(el => el.parent.includes(e.id)))
+        items.forEach(e => e.comments = items.filter(el => el.parent.includes(e.id)))
         items = items.filter(e => e.level === 0)
 
         const {post, tags, author} = this.state
