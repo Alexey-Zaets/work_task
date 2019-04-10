@@ -24,17 +24,14 @@ class ReplyForm extends Component {
             "Authorization": cookies.get('token')
         })
 
-        const comments = store.getState().comments
+        const comments = this.props.children
         comments.push(id)
 
         const patchReq = {
             method: 'PATCH',
             headers: headers,
             body: JSON.stringify({
-                post: this.props.postID,
                 comments: comments,
-                level: this.props.level + 1,
-                comment: this.state.comment
             })
         }
 
@@ -74,6 +71,7 @@ class ReplyForm extends Component {
                 post: this.props.postID,
                 author: cookies.get('username'),
                 comment: this.state.comment,
+                level: this.props.level + 1
             })
         }
 
