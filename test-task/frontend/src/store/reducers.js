@@ -7,7 +7,13 @@ const userLogOutReducer = (state=defaultState, action) => {
         case "LOGOUT":
             return {...state, auth: false, username: ''}
         case "POST_LIST":
-            return {...state, postsList: action.postsList}
+            return {
+                ...state,
+                postsList: action.postsList,
+                count: action.count,
+                nextPage: action.nextPage,
+                prevPage: action.prevPage
+            }
         case "POST_DETAIL":
             return {
                 ...state,

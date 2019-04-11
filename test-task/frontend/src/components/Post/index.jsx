@@ -2,154 +2,8 @@ import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
 import {store, cookies} from '../../index'
 import {Link} from 'react-router-dom'
+import Comment from '../Comment'
 
-
-class ReplyForm extends Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {comment: '', comment_error: ''}
-
-        this.handleClick = this.handleClick.bind(this)
-        this.handleComment = this.handleComment.bind(this)
-    }
-
-    handleComment = ({target: {value}}) => {
-        this.setState({comment: value, comment_error: ''})
-    }
-
-    addReply = (id, comments) => {
-
-        const headers = new Headers({
-            "Content-Type": "application/json",
-            "Authorization": cookies.get('token')
-        })
-
-        const patchReq = {
-            method: 'PATCH',
-            headers: headers,
-            body: JSON.stringify({
-                comments: comments,
-                level: this.props.level + 1,
-                comment: this.state.comment
-            })
-        }
-
-        fetch(`http://0.0.0.0/api/v1/comment/${this.props.parent}/`, patchReq)
-            .then(response => {
-                if (response.status === 200) {
-                    response.json().then(data => {
-                        const comments = store.getState().comments
-                        comments.push(data)
-                        this.setState({comment: ''})
-                        store.dispatch({
-                            type: "ADD_REPLY",
-                            comments: comments
-                        })
-                    alert('Reply was added')
-                    })
-                } else {
-                    response.json().then((json) => {
-                        this.setState({
-                            comment_error: json.comment[0]
-                        })
-                    })
-                }
-            })
-    }
-
-    handleClick = (e) => {
-        e.preventDefault();
-
-        const headers = new Headers({
-            "Content-Type": "application/json",
-            "Authorization": cookies.get('token')
-        })
-
-        const postReq = {
-            method: 'POST',
-            headers: headers,
-            mode: 'cors',
-            body: JSON.stringify({
-                post: this.props.post,
-                author: cookies.get('username'),
-                comment: this.state.comment
-            })
-        }
-
-        fetch(`http://0.0.0.0/api/v1/comment/`, postReq)
-            .then(response => {
-                if (response.status === 201) {
-                    response.json().then((json) => {
-                        this.addReply(json.id, json.comments)
-                    })
-                } else {
-                    response.json().then((json) => {
-                        this.setState({
-                            comment_error: json.comment[0]
-                        })
-                    })
-                }
-            })
-    }
-
-    render() {
-        const comment_error_alert = this.state.comment_error && <div className="alert alert-danger" role="alert">{this.state.comment_error}</div>
-
-        return (
-            <form>
-                <div className="form-group">
-                    <label className="col-form-label requiredField">Reply</label>
-                    <div>
-                        <textarea onChange={this.handleComment} value={this.state.comment} className="textarea form-control" name="comment" cols="40" rows="5" required=""></textarea>
-                    </div>
-                </div>
-                {comment_error_alert}
-                <button onClick={this.handleClick} className="btn btn-lg btn-primary btn-block mb-5">Reply</button>
-            </form>
-        )
-    }
-}
-
-class Comment extends Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {reply: false}
-        this.handleReply = this.handleReply.bind(this)
-    }
-
-    handleReply = (e) => {
-        e.preventDefault();
-        this.setState({reply: !this.state.reply})
-    }
-
-    render() {
-        const comment = {
-            author: this.props.author,
-            text: this.props.text,
-            level: this.props.level,
-            post: this.props.post,
-            parent: this.props.parent,
-            children: this.props.children
-        }
-
-        return (
-            <ul className="list-group list-group-flush" key={comment.parent}>
-                <li className="list-group-item">
-                    <div className="media position-relative border-bottom mt-2">
-                        <div className="media-body">
-                            <h5 className="mt-0">{comment.author}</h5>
-                            <p>{comment.text}</p>
-                            {comment.level < 2 && <button onClick={this.handleReply} className="btn btn-primary btn-sm">{this.state.reply ? 'Close' : 'Reply'}</button>}
-                            {this.state.reply && <ReplyForm post={comment.post} parent={comment.parent} level={comment.level}/>}
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        )
-    }
-}
 
 class Post extends Component {
     constructor(props) {
@@ -163,8 +17,33 @@ class Post extends Component {
             comment: '',
         }
 
+        this.renderComment = this.renderComment.bind(this)
         this.handleCommentAdd = this.handleCommentAdd.bind(this)
         this.handleCommentChange = this.handleCommentChange.bind(this)
+    }
+
+    renderComment(comment) {
+        const id = this.props.match.params.id || ''
+        return (
+            <ul className="list-group list-group-flush" key={comment.id}>
+                <li className="list-group-item">
+                    <div className="media position-relative border-bottom mt-2">
+                        <div className="media-body">
+                            <Comment
+                                key={comment.id}
+                                children={comment.comments}
+                                post={id}
+                                parent={comment.id}
+                                author={comment.author ? comment.author.username : 'Anonymous'}
+                                text={comment.comment}
+                                level={comment.level}
+                            />
+                        </div>
+                    </div>
+                </li>
+                {(comment.comments && comment.comments.length) ? <li className="list-group-item">{comment.comments.map(this.renderComment)}</li> : ''}
+            </ul>
+        )
     }
 
     componentDidMount() {
@@ -202,6 +81,8 @@ class Post extends Component {
     handleCommentAdd = (e) => {
         e.preventDefault();
 
+        const id = this.props.match.params.id || ''
+
         const headers = new Headers({
             "Content-Type": "application/json",
             "Authorization": cookies.get('token')
@@ -212,7 +93,7 @@ class Post extends Component {
             headers: headers,
             mode: 'cors',
             body: JSON.stringify({
-                post: this.props.match.params.id || '',
+                post: id,
                 author: cookies.get('username'),
                 comment: this.state.comment
             })
@@ -246,7 +127,11 @@ class Post extends Component {
     }
 
     render() {
-        const {post, tags, comments, author} = this.state
+        let items = this.state.comments
+        items.forEach(e => e.comments = items.filter(el => el.parent.includes(e.id)))
+        items = items.filter(e => e.level === 0)
+
+        const {post, tags, author} = this.state
         const {username} = store.getState()
         const comment_error_alert = this.state.comment_error && <div className="alert alert-danger" role="alert">{this.state.comment_error}</div>
 
@@ -261,11 +146,7 @@ class Post extends Component {
                 <p className="text-justify text-monospace mt-3 border-bottom">{post.content}</p>
                 {username === author && <Link to={`/update/${post.id}`} className="btn btn-primary btn-lg btn-block">Update post</Link>}
                 <h3 className="mt-3">Comments</h3>
-                {comments.map((comment) => {
-                    return (
-                        <Comment key={comment.id} children={comment.comments} post={post.id} parent={comment.id} author={comment.author ? comment.author.username : 'Anonymous'} text={comment.comment} level={comment.level}/>
-                    )
-                })}
+                {items.map(this.renderComment)}
                 <h3 className="mt-3">Add new comment</h3>
                 <form>
                     <div className="form-group">
