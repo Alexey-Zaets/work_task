@@ -1,12 +1,28 @@
 import React, {Component} from 'react'
 import ReplyForm from '../ReplyForm'
+import {store} from '../../index'
 
 
 class Comment extends Component {
     constructor(props) {
         super(props)
-        this.state = {reply: false}
+        this.state = {
+            post: {},
+            author: '',
+            tags: [],
+            comments: [],
+            comment: '',
+            reply: false
+        }
         this.handleReply = this.handleReply.bind(this)
+    }
+
+    componentDidMount() {
+        store.subscribe(() => {
+            if (this.state !== store.getState()) {
+                this.setState(store.getState())
+            }
+        })
     }
 
     handleReply = (e) => {

@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
+import {URL} from '../../index'
 
 
 class TagList extends Component {
@@ -23,7 +24,7 @@ class TagList extends Component {
             mode: 'cors'
         }
         
-        fetch('http://0.0.0.0/api/v1/tag', req)
+        fetch('http://' + URL + '/tag', req)
             .then(response => response.json())
             .then(data => this.setState({tagsList: data.results}))
     }

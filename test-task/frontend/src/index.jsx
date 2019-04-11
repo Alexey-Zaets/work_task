@@ -20,6 +20,8 @@ export let store = createStore(
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
 
+export const URL = process.env.REACT_APP_API
+
 export const cookies = new Cookies()
 
 render((

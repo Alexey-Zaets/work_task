@@ -13,7 +13,7 @@ class Pagination extends Component {
 
         if (!this.props.count) {
             return (
-                <div class="alert alert-primary" role="alert">No articles yet</div>
+                <div className="alert alert-primary" role="alert">No articles yet</div>
             )
         }
         

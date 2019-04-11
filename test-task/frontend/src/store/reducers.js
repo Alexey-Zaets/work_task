@@ -21,6 +21,7 @@ const userLogOutReducer = (state=defaultState, action) => {
                 tags: action.tags,
                 comments: action.comments,
                 author: action.author,
+                reply: action.reply
             }
         case "ADD_REPLY":
             return {...state, comments: action.comments}

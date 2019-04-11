@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Redirect} from 'react-router-dom'
-import {store, cookies} from '../../index'
+import {store, cookies, URL} from '../../index'
 import Select from 'react-select'
 
 
@@ -62,7 +62,7 @@ class CreatePostForm extends Component {
             })
         }
 
-        fetch('http://0.0.0.0/api/v1/post/', req)
+        fetch('http://' + URL + '/post/', req)
             .then(response => {
                 if (response.status === 201) {
                     this.setState({
@@ -104,7 +104,7 @@ class CreatePostForm extends Component {
             mode: 'cors'
         }
 
-        fetch(`http://0.0.0.0/api/v1/tag`, req)
+        fetch(`http://` + URL + `/tag`, req)
             .then(response => {
                 return response.json()
             })
@@ -112,7 +112,7 @@ class CreatePostForm extends Component {
                 this.setState({form_tags: data.results})
             })
 
-        fetch(`http://0.0.0.0/api/v1/category`, req)
+        fetch(`http://` + URL + `/category`, req)
             .then(response => {
                 return response.json()
             })

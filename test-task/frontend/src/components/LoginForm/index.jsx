@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Redirect} from 'react-router-dom'
-import {store, cookies} from '../../index'
+import {store, cookies, URL} from '../../index'
 
 
 class LoginForm extends Component {
@@ -47,7 +47,7 @@ class LoginForm extends Component {
             })
         }
 
-        fetch('http://0.0.0.0/api/v1/user/login/', req)
+        fetch('http://' + URL + '/user/login/', req)
             .then(response => {
                 if (response.status === 200) {
                     store.dispatch({type: "LOGIN", username: this.state.username})

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import {store, cookies} from '../../index'
+import {store, cookies, URL} from '../../index'
 import {Link} from 'react-router-dom'
 import Comment from '../Comment'
 
@@ -65,7 +65,7 @@ class Post extends Component {
             mode: 'cors'
         }
 
-        fetch(`http://0.0.0.0/api/v1/post/${id}`, req)
+        fetch(`http://` + URL + `/post/${id}`, req)
             .then(response => {return response.json()})
             .then(data => {
                 store.dispatch({
@@ -99,7 +99,7 @@ class Post extends Component {
             })
         }
 
-        fetch(`http://0.0.0.0/api/v1/comment/`, req)
+        fetch(`http://` + URL + `/comment/`, req)
             .then(response => {
                 if (response.status === 201) {
                     alert('Comment was added')
@@ -128,7 +128,6 @@ class Post extends Component {
 
     render() {
         let items = this.state.comments
-        console.log(items)
         items.forEach(e => e.comments = items.filter(el => el.parent && el.parent.includes(e.id)))
         items = items.filter(e => e.level === 0)
 

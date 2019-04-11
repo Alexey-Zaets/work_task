@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
+import {URL} from '../../index'
 
 
 class CategoryList extends Component {
@@ -30,7 +31,7 @@ class CategoryList extends Component {
             mode: 'cors'
         }
 
-        fetch('http://0.0.0.0/api/v1/category/', req)
+        fetch('http://' + URL + '/category/', req)
             .then(response => response.json())
             .then(data => {
                 this.setState({

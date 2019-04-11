@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import {store, cookies} from '../../index'
+import {store, cookies, URL} from '../../index'
 
 
 class ReplyForm extends Component {
@@ -49,10 +49,10 @@ class ReplyForm extends Component {
             })
         }
 
-        fetch(`http://0.0.0.0/api/v1/comment/${this.props.commentID}/`, patchReq)
+        fetch(`http://` + URL + `/comment/${this.props.commentID}/`, patchReq)
             .then(response => {
                 if (response.status === 200) {
-                    fetch(`http://0.0.0.0/api/v1/post/${this.props.postID}`, reqGet)
+                    fetch(`http://` + URL + `/post/${this.props.postID}`, reqGet)
                         .then(response => {
                             response.json().then(data => {
                                 store.dispatch({
@@ -61,6 +61,7 @@ class ReplyForm extends Component {
                                     author: data.author.username,
                                     tags: data.tags,
                                     comments: data.comment_set, //.reverse()
+                                    reply: false,
                                 })
                                 this.setState({comment: ''})
                                 alert('Reply was added')
@@ -96,7 +97,7 @@ class ReplyForm extends Component {
             })
         }
 
-        fetch(`http://0.0.0.0/api/v1/comment/`, postReq)
+        fetch(`http://` + URL + `/comment/`, postReq)
             .then(response => {
                 if (response.status === 201) {
                     response.json().then((json) => {
