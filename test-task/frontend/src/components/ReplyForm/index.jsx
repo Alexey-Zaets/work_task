@@ -24,27 +24,48 @@ class ReplyForm extends Component {
             "Authorization": cookies.get('token')
         })
 
+        const headersGet = new Headers({
+            "Content-Type": "application/json"
+        })
+
         const comments = this.props.children
-        comments.push(id)
+        const newComments = []
+        comments.map((comment) => {
+            newComments.push(comment.id)
+        })
+        newComments.push(id)
+
+        const reqGet = {
+            method: 'GET',
+            headers: headersGet,
+            mode: 'cors'
+        }
 
         const patchReq = {
             method: 'PATCH',
             headers: headers,
             body: JSON.stringify({
-                comments: comments,
+                comments: newComments,
             })
         }
 
         fetch(`http://0.0.0.0/api/v1/comment/${this.props.commentID}/`, patchReq)
             .then(response => {
                 if (response.status === 200) {
-                    response.json().then(data => {
-                        store.dispatch({
-                            type: "ADD_REPLY",
-                            comments: comments
+                    fetch(`http://0.0.0.0/api/v1/post/${this.props.postID}`, reqGet)
+                        .then(response => {
+                            response.json().then(data => {
+                                store.dispatch({
+                                    type: "POST_DETAIL",
+                                    post: data,
+                                    author: data.author.username,
+                                    tags: data.tags,
+                                    comments: data.comment_set, //.reverse()
+                                })
+                                this.setState({comment: ''})
+                                alert('Reply was added')
+                            })
                         })
-                    alert('Reply was added')
-                    })
                 } else {
                     response.json().then((json) => {
                         this.setState({

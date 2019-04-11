@@ -128,7 +128,8 @@ class Post extends Component {
 
     render() {
         let items = this.state.comments
-        items.forEach(e => e.comments = items.filter(el => el.parent.includes(e.id)))
+        console.log(items)
+        items.forEach(e => e.comments = items.filter(el => el.parent && el.parent.includes(e.id)))
         items = items.filter(e => e.level === 0)
 
         const {post, tags, author} = this.state

@@ -10,10 +10,17 @@ class Pagination extends Component {
         const prevLink = previous ? previous.split('?') : ''
         const activeLink = 'page-item'
         const disableLink = 'page-item disabled'
+
+        if (!this.props.count) {
+            return (
+                <div class="alert alert-primary" role="alert">No articles yet</div>
+            )
+        }
+        
         return (
             <div>
                 <nav aria-label="Page navigation example">
-                    <ul className="pagination justify-content-center">
+                    <ul className="pagination justify-content-start">
                         
                         <li className={prevLink !== '' ? activeLink : disableLink}>
                             <Link to={{pathname: '/', search: prevLink !== '' && prevLink[1]}} className="page-link" ><span aria-hidden="true">&laquo;</span></Link>

@@ -87,7 +87,7 @@ class Home extends Component {
                             <h3 key={post.id}><Link to={`/post/${post.id}`}>{post.title}</Link></h3>
                         )
                     })}
-                    <Pagination next={this.state.nextPage} previous={this.state.prevPage}/>
+                    <Pagination next={this.state.nextPage} previous={this.state.prevPage} count={this.state.count}/>
                 </div>
             )
         }
