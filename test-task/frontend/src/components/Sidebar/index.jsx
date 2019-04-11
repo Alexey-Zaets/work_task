@@ -13,6 +13,8 @@ class LastTenCommentList extends Component {
         }
 
         this.handleOnCommentClick = this.handleOnCommentClick.bind(this);
+        this.getComment = this.getComment.bind(this)
+        setInterval(this.getComment, 10000)
     }
 
     componentDidMount() {
@@ -35,6 +37,26 @@ class LastTenCommentList extends Component {
                 this.setState({commentsList: data.results})
             })
 
+    }
+
+    getComment() {
+        const headers = new Headers({
+            "Content-Type": "application/json"
+        })
+
+        const req = {
+            method: 'GET',
+            headers: headers,
+            mode: 'cors'
+        }
+
+        fetch('http://0.0.0.0/api/v1/lastcomment', req)
+            .then(response => {
+                return response.json()
+            })
+            .then(data=> {
+                this.setState({commentsList: data.results})
+            })
     }
 
     handleOnCommentClick(e) {
