@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
-import {store, cookies, URL} from '../../index'
+import {store, cookies} from '../../index'
 
 
 class ReplyForm extends Component {
@@ -49,10 +49,10 @@ class ReplyForm extends Component {
             })
         }
 
-        fetch(`http://` + URL + `/comment/${this.props.commentID}/`, patchReq)
+        fetch(localStorage.getItem('COMMENT') + `${this.props.commentID}/`, patchReq)
             .then(response => {
                 if (response.status === 200) {
-                    fetch(`http://` + URL + `/post/${this.props.postID}`, reqGet)
+                    fetch(localStorage.getItem('POST') + this.props.postID, reqGet)
                         .then(response => {
                             response.json().then(data => {
                                 store.dispatch({
@@ -97,7 +97,7 @@ class ReplyForm extends Component {
             })
         }
 
-        fetch(`http://` + URL + `/comment/`, postReq)
+        fetch(localStorage.getItem('COMMENT'), postReq)
             .then(response => {
                 if (response.status === 201) {
                     response.json().then((json) => {

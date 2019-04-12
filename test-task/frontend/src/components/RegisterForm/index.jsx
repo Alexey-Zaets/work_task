@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {Redirect} from 'react-router-dom'
-import {URL} from '../../index'
 
 
 class RegisteForm extends Component {
@@ -56,7 +55,7 @@ class RegisteForm extends Component {
             body: JSON.stringify({username: this.state.username, email:this.state.email, password: this.state.password})
         }
 
-        fetch('http://' + URL + '/user/register/', req)
+        fetch(localStorage.getItem('REGISTER'), req)
             .then(response => {
                 if (response.status === 201) {
                     this.setState({

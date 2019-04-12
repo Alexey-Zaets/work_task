@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import fetch from 'isomorphic-fetch'
 import {Link, Redirect} from 'react-router-dom'
-import {store, URL} from '../../index'
+import {store} from '../../index'
 import Pagination from '../Pagination'
 
 
@@ -35,7 +35,7 @@ class Home extends Component {
             mode: 'cors'
         }
 
-        fetch('http://' + URL + '/post/' + this.props.location.search, req)
+        fetch(localStorage.getItem('POST') + this.props.location.search, req)
             .then(response => response.json())
             .then(data => {
                 store.dispatch({
@@ -62,7 +62,7 @@ class Home extends Component {
                 mode: 'cors'
             }
 
-            fetch('http://' + URL + '/post/' + this.props.location.search, req)
+            fetch(localStorage.getItem('POST') + this.props.location.search, req)
                 .then(response => response.json())
                 .then(data => {
                     store.dispatch({

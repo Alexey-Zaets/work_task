@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import CategoryList from '../CategoryList'
 import TagList from '../TagList'
-import {URL} from '../../index'
 
 
 class LastTenCommentList extends Component {
@@ -30,7 +29,7 @@ class LastTenCommentList extends Component {
             mode: 'cors'
         }
 
-        fetch('http://' + URL + '/lastcomment', req)
+        fetch(localStorage.getItem('LASTCOMMENT'), req)
             .then(response => {
                 return response.json()
             })
@@ -51,7 +50,7 @@ class LastTenCommentList extends Component {
             mode: 'cors'
         }
 
-        fetch('http://' + URL + '/lastcomment', req)
+        fetch(localStorage.getItem('LASTCOMMENT'), req)
             .then(response => {
                 return response.json()
             })
