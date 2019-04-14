@@ -30,7 +30,7 @@ class CategoryList extends Component {
             mode: 'cors'
         }
 
-        fetch('http://0.0.0.0/api/v1/category/', req)
+        fetch(localStorage.getItem('CATEGORY'), req)
             .then(response => response.json())
             .then(data => {
                 this.setState({

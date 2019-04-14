@@ -62,7 +62,7 @@ class CreatePostForm extends Component {
             })
         }
 
-        fetch('http://0.0.0.0/api/v1/post/', req)
+        fetch(localStorage.getItem('POST'), req)
             .then(response => {
                 if (response.status === 201) {
                     this.setState({
@@ -104,7 +104,7 @@ class CreatePostForm extends Component {
             mode: 'cors'
         }
 
-        fetch(`http://0.0.0.0/api/v1/tag`, req)
+        fetch(localStorage.getItem('TAG'), req)
             .then(response => {
                 return response.json()
             })
@@ -112,7 +112,7 @@ class CreatePostForm extends Component {
                 this.setState({form_tags: data.results})
             })
 
-        fetch(`http://0.0.0.0/api/v1/category`, req)
+        fetch(localStorage.getItem('CATEGORY'), req)
             .then(response => {
                 return response.json()
             })

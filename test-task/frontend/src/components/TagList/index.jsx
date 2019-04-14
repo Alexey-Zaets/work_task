@@ -23,7 +23,7 @@ class TagList extends Component {
             mode: 'cors'
         }
         
-        fetch('http://0.0.0.0/api/v1/tag', req)
+        fetch(localStorage.getItem('TAG'), req)
             .then(response => response.json())
             .then(data => this.setState({tagsList: data.results}))
     }

@@ -35,7 +35,7 @@ class Home extends Component {
             mode: 'cors'
         }
 
-        fetch('http://0.0.0.0/api/v1/post/' + this.props.location.search, req)
+        fetch(localStorage.getItem('POST') + this.props.location.search, req)
             .then(response => response.json())
             .then(data => {
                 store.dispatch({
@@ -62,7 +62,7 @@ class Home extends Component {
                 mode: 'cors'
             }
 
-            fetch('http://0.0.0.0/api/v1/post/' + this.props.location.search, req)
+            fetch(localStorage.getItem('POST') + this.props.location.search, req)
                 .then(response => response.json())
                 .then(data => {
                     store.dispatch({
@@ -87,7 +87,7 @@ class Home extends Component {
                             <h3 key={post.id}><Link to={`/post/${post.id}`}>{post.title}</Link></h3>
                         )
                     })}
-                    <Pagination next={this.state.nextPage} previous={this.state.prevPage}/>
+                    <Pagination next={this.state.nextPage} previous={this.state.prevPage} count={this.state.count}/>
                 </div>
             )
         }

@@ -47,7 +47,7 @@ class LoginForm extends Component {
             })
         }
 
-        fetch('http://0.0.0.0/api/v1/user/login/', req)
+        fetch(localStorage.getItem('LOGIN'), req)
             .then(response => {
                 if (response.status === 200) {
                     store.dispatch({type: "LOGIN", username: this.state.username})
